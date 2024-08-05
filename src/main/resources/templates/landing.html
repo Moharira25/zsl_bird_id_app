@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/session" method="post">
+    <button>Create New Session</button>
+</form>
+<div th:if="${sessions.size() != 0}">
+    <div th:each="s : ${sessions}">
+        <a th:href="@{/session/join/{id}(id=${s.id})}">Join</a>
+    </div>
+
+</div>
+</body>
+</html>
