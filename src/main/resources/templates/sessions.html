@@ -1,10 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Sessions</title>
+    <script>
+        function joinSession(sessionId) {
+            fetch("/api/sessions/" + sessionId + "/join", {
+                method: "POST"
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Joined session successfully");
+                    // Redirect to the session page or another page
+                    window.location.href = "/session/" + sessionId; // Update this URL to your desired destination
+                } else {
+                    console.error("Failed to join session");
+                }
+            });
+        }
+
+        function createSession(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const data = {
+                name: formData.get('name')
+            };
+
+            fetch("/api/sessions", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Session created successfully");
+                    window.location.href = "/explore"; // Redirect to the sessions page or another page
+                } else {
+                    console.error("Failed to create session");
+                }
+            });
+        }
+    </script>
 </head>
 <body>
+<h1>Welcome to the sessions - explore live sessions</h1>
+
+<!-- Form to create a session -->
+<div>
+    <h2>Create a new session</h2>
+    <form onsubmit="createSession(event)">
+        <label for="name">Session Name:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit">Create Session</button>
+    </form>
+</div>
+
+<!-- List of sessions -->
+<div th:each="s : ${sessions}">
+    <button th:onclick="'joinSession(\'' + ${s.id} + '\')'" th:text="'Join Session ' + ${s.name}">Join Session</button>
+</div>
 
 </body>
 </html>

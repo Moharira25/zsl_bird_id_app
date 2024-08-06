@@ -1,40 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>WebSocket Test</title>
+    <title>Landing Page</title>
 </head>
 <body>
-<h1>WebSocket Test</h1>
-<button onclick="connect()">Connect</button>
-<button onclick="sendMessage()">Send Message</button>
-<button onclick="disconnect()">Disconnect</button>
-<script>
-    var ws;
-
-    function connect() {
-        ws = new WebSocket('ws://localhost:8080/ws');
-        ws.onmessage = function(event) {
-            console.log('Received: ' + event.data);
-        };
-        ws.onopen = function(event) {
-            console.log('Connected');
-        };
-        ws.onclose = function(event) {
-            console.log('Disconnected');
-        };
-    }
-
-    function sendMessage() {
-        if (ws) {
-            ws.send('Hello, WebSocket!');
-        }
-    }
-
-    function disconnect() {
-        if (ws) {
-            ws.close();
-        }
-    }
-</script>
+<p>Welcome To ZSL Bird Song ID</p>
+<a href="/explore">Explore Live Sessions</a>
 </body>
 </html>

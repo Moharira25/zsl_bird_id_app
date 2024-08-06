@@ -1,16 +1,58 @@
 <!DOCTYPE html>
-<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Live Q&A</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dynamically set the session ID
+            var sessionId = [[${sessionId}]];
+
+            // Initialize WebSocket connection
+            var socket = new WebSocket("ws://localhost:8080/ws/sessions/" + sessionId);
+
+            socket.onmessage = function(event) {
+                var message = event.data;
+                console.log("Received message: " + message);
+                var messageContainer = document.getElementById("messageContainer");
+                var messageElement = document.createElement("p");
+                messageElement.textContent = message;
+                messageContainer.appendChild(messageElement);
+            };
+
+            socket.onopen = function() {
+                console.log("WebSocket connection established");
+            };
+
+            socket.onclose = function() {
+                console.log("WebSocket connection closed");
+            };
+
+            socket.onerror = function(error) {
+                console.error("WebSocket error: ", error);
+            };
+
+            // Handle form submission
+            document.getElementById('questionForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                var questionInput = document.getElementById('questionInput');
+                var question = questionInput.value;
+                if (question) {
+                    socket.send(question);
+                    questionInput.value = ''; // Clear the input field
+                }
+            });
+        });
+    </script>
 </head>
 <body>
-<h1> Welcome to the session</h1>
-<div th:if=" ${session_.getUserList() != null}">
-    <h2 th:text="'Active users: ' + ${session_.getUserList().size()}"></h2>
-</div>
-
-<h2 th:unless="${session_.getUserList() != null}">Active users: 0</h2>
-
+<h1>Live Q&A Sessions</h1>
+<div id="messageContainer"></div>
+<p>Welcome to the session</p>
+<form id="questionForm">
+    <label for="questionInput">Ask a question:</label>
+    <input type="text" id="questionInput" required>
+    <button type="submit">Send</button>
+</form>
 </body>
 </html>
