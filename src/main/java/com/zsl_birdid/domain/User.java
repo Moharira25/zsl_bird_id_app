@@ -1,33 +1,27 @@
 package com.zsl_birdid.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    private String username;
+    private String role = "user";
+    private String password;
 
-    @ElementCollection
-    private List<String> role = new ArrayList<>();
+    @OneToOne(mappedBy = "admin", cascade = CascadeType.ALL)
+    private Session managedSession;
 
-    public UUID getId() {
-        return id;
-    }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public List<String> getRole() {
-        return role;
-    }
-
-    public void setRole(List<String> role) {
-        this.role = role;
-    }
 }
