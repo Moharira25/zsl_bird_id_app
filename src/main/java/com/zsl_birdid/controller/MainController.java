@@ -1,7 +1,9 @@
 package com.zsl_birdid.controller;
 
+import com.zsl_birdid.Repo.BirdRepository;
 import com.zsl_birdid.Repo.SessionRepository;
 import com.zsl_birdid.Repo.UserRepository;
+import com.zsl_birdid.domain.Bird;
 import com.zsl_birdid.domain.Session;
 import com.zsl_birdid.domain.User;
 import jakarta.servlet.http.Cookie;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @Controller
 public class MainController {
 
@@ -26,9 +29,20 @@ public class MainController {
     @Autowired
     private SessionRepository sessionRepository;
 
+    @Autowired
+    private BirdRepository birdRepository;
+
+
     @RequestMapping("/")
     public String index() {
         return "index";
+    }
+
+    @RequestMapping("/bird")
+    public String birdData(Model model) {
+        List<Bird> birds = (List<Bird>) birdRepository.findAll();
+        model.addAttribute("birds", birds);
+        return "test";
     }
 
     @RequestMapping("/session/{id}")
