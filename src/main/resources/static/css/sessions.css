@@ -1,0 +1,92 @@
+body {
+    background-color: #e6f7e6; /* Light green background */
+    color: #006400; /* Dark green text */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box; /* Ensures padding and border are included in width and height */
+}
+
+h1 {
+    color: #004d00; /* Darker green for the main heading */
+    text-align: center;
+    font-size: 2em; /* Larger font size for prominence */
+    margin: 0; /* Reset margin for consistency */
+}
+
+h2 {
+    color: #005500; /* Dark green for the secondary headings */
+    font-size: 1.5em; /* Slightly smaller than h1 but still prominent */
+    margin: 0; /* Reset margin for consistency */
+}
+
+label {
+    color: #006600; /* Medium green for labels */
+    font-weight: bold; /* Bold labels for emphasis */
+}
+
+input[type="text"] {
+    border: 2px solid #006400; /* Dark green border for input fields */
+    padding: 8px; /* Padding inside the input */
+    border-radius: 4px; /* Rounded corners */
+    width: 100%; /* Full width of the parent container */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+    margin-bottom: 15px; /* Space below each input */
+}
+
+.centered-form-input {
+    width: 100%;
+    display: flex;
+    flex-direction: column; /* Stack input fields vertically */
+    justify-content: center; /* Center input fields */
+}
+
+button {
+    background-color: #008000; /* Green background for buttons */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Padding for button content */
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 1em; /* Standard font size for buttons */
+    cursor: pointer;
+    border-radius: 4px; /* Rounded corners */
+    width: 100%; /* Full width of the parent container */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+}
+
+button:hover {
+    background-color: #006400; /* Darker green background on hover */
+}
+
+div {
+    margin-bottom: 20px; /* Default margin for divs */
+}
+
+form {
+    margin: 20px 0; /* Space above and below the form */
+}
+
+.centered-container, .sessions {
+    width: 50%; /* Sets width to 50% of the parent container */
+    margin: 0 auto 1rem auto; /* Centers horizontally and adds margin at the bottom */
+    text-align: center;
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Padding inside the container */
+    background-color: #ffffff; /* White background for the form */
+    box-shadow: 0 0 10px rgba(0, 100, 0, 0.2); /* Light shadow for visual depth */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+}
+
+.centered-form {
+    display: flex;
+    width: 75%; /* Sets width to 75% of the parent container */
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: center; /* Center elements vertically */
+    margin: auto; /* Center the form horizontally */
+}
+
+.video-card {
+    margin-bottom: 20px; /* Space below video cards */
+}
