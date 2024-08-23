@@ -1,0 +1,191 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e0f7e4;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    box-sizing: border-box; /* Ensures padding and border are included in width and height */
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Takes the full width of the viewport */
+    max-width: 1200px; /* Sets a maximum width for larger screens */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+}
+
+h1 {
+    color: #006400; /* Dark green text color */
+    text-align: center;
+    margin-top: 0; /* Removes top margin for alignment */
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between; /* Distributes space evenly between buttons */
+    margin-bottom: 20px; /* Adds space below the button group */
+}
+
+.btn-base {
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Adds a smooth background-color transition */
+}
+
+.btn {
+    background-color: #4CAF50; /* Green background */
+    padding: 10px 20px; /* Adds padding to buttons */
+    font-size: 16px; /* Sets font size */
+}
+
+.play-button {
+    background-color: #8e44ad; /* Purple background */
+    color: white;
+    padding: 15px 30px; /* Larger padding for play button */
+    font-size: 18px; /* Slightly larger font size */
+    border-radius: 50px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s; /* Adds a smooth background-color transition */
+    margin: 20px auto; /* Centers the button */
+    display: block;
+}
+
+.play-button:hover {
+    background-color: #732d91; /* Darker purple on hover */
+}
+
+#sessionStats {
+    background-color: #006400; /* Dark green background */
+    color: white;
+    padding: 10px; /* Padding for content */
+    border-radius: 5px; /* Rounded corners */
+    margin-bottom: 20px; /* Space below the stats */
+}
+
+.video-options {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap onto the next line */
+    gap: 2.5rem; /* Adds space between video cards */
+    justify-content: center; /* Centers the cards horizontally */
+    align-items: center; /* Centers the cards vertically */
+    width: 100%;
+}
+
+.video-card {
+    position: relative;
+    width: 100%; /* Takes the full width of its container */
+    max-width: 250px; /* Sets maximum width for square appearance */
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensures content does not overflow */
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out; /* Adds a smooth scaling effect on hover */
+    display: flex;
+    flex-direction: column;
+    height: 300px; /* Fixed height for consistent aspect ratio */
+    box-sizing: border-box; /* Includes padding and border in height calculation */
+}
+
+.video-card:hover {
+    transform: scale(1.05); /* Scales up the card on hover */
+}
+
+.video-card .video-container {
+    width: 100%;
+    height: 50%; /* Takes half of the card's height */
+    overflow: hidden; /* Ensures content does not overflow */
+}
+
+.video-card video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Maintains aspect ratio and covers the area */
+    display: block; /* Removes any extra space below the media */
+}
+
+.img-container {
+    width: 100%;
+    height: 33%; /* Takes one-third of the card's height */
+    overflow: hidden; /* Ensures content does not overflow */
+    position: relative; /* Keeps the bird-name div at the bottom */
+}
+
+.video-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Maintains aspect ratio and covers the area */
+    display: block; /* Removes any extra space below the media */
+}
+
+.bird-name {
+    background-color: #f0f0f0; /* Light gray background */
+    padding: 5px; /* Padding around the text */
+    text-align: center; /* Centers the text */
+    font-weight: bold; /* Bold font */
+    width: 100%; /* Takes the full width of the container */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+    position: absolute; /* Positions it at the bottom of its container */
+    bottom: 0; /* Sticks it to the bottom of its parent container */
+    left: 0;
+    height: 17%; /* Takes a fixed proportion of the card's height */
+}
+
+.video-card p {
+    margin: 0;
+    padding: 10px; /* Padding around text */
+    text-align: center; /* Centers the text */
+    background-color: #f5f5f5; /* Light gray background */
+    font-weight: bold; /* Bold font */
+}
+
+.video-card.correct {
+    border-color: green; /* Green border for correct answers */
+    background-color: #e0f8e0; /* Light green background */
+}
+
+.video-card.incorrect {
+    border-color: red; /* Red border for incorrect answers */
+    background-color: #f8e0e0; /* Light red background */
+}
+
+.feedback {
+    margin: 20px; /* Adds margin around feedback text */
+    font-size: 1.2em; /* Larger font size for emphasis */
+    font-weight: bold; /* Bold font */
+}
+
+#messageContainer {
+    margin-bottom: 20px; /* Adds space below the container */
+    padding: 10px; /* Padding for content */
+    border: 1px solid #ddd; /* Light gray border */
+    background-color: #fff; /* White background */
+    width: 100%;
+    max-width: 1200px; /* Sets a maximum width for larger screens */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+}
+
+.question-container {
+    margin-bottom: 20px; /* Space below the question container */
+    text-align: center; /* Centers the text */
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .video-card {
+        max-width: 100%; /* Full width on smaller screens */
+        height: auto; /* Adjust height automatically */
+    }
+
+    .button-group {
+        flex-direction: column; /* Stack buttons vertically */
+        align-items: center; /* Center the buttons */
+    }
+}
