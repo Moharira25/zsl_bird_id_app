@@ -1,15 +1,15 @@
 package com.zsl_birdid.controller;
 
-import com.zsl_birdid.Repo.BirdRepository;
+
 import com.zsl_birdid.Repo.SessionRepository;
 import com.zsl_birdid.Repo.UserRepository;
-import com.zsl_birdid.domain.Bird;
 import com.zsl_birdid.domain.Session;
 import com.zsl_birdid.domain.User;
+import com.zsl_birdid.services.SessionService;
+import com.zsl_birdid.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,49 +19,89 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @Controller
 public class MainController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final SessionRepository sessionRepository;
+    private final SessionService sessionService;
+    private final UserService userService;
 
-    @Autowired
-    private SessionRepository sessionRepository;
+    /**
+     * Constructor for MainController.
+     * Initializes repositories and services.
+     *
+     * @param userRepository   Repository for User entities
+     * @param sessionRepository Repository for Session entities
+     * @param sessionService   Service for managing sessions
+     * @param userService      Service for managing users
+     */
+    public MainController(UserRepository userRepository, SessionRepository sessionRepository, SessionService sessionService, UserService userService) {
+        this.userRepository = userRepository;
+        this.sessionRepository = sessionRepository;
+        this.sessionService = sessionService;
+        this.userService = userService;
+    }
 
-    @Autowired
-    private BirdRepository birdRepository;
-
-
+    /**
+     * Handles requests to the root URL ("/").
+     * Returns the view name for the homepage.
+     *
+     * @return the name of the view to render
+     */
     @RequestMapping("/")
     public String index() {
         return "index";
     }
 
-    @RequestMapping("/bird")
-    public String birdData(Model model) {
-        List<Bird> birds = (List<Bird>) birdRepository.findAll();
-        model.addAttribute("birds", birds);
-        return "test";
-    }
-
+    /**
+     * Handles requests to "/session/{id}".
+     * Retrieves a Session entity by ID and checks if the current user is allowed to access it.
+     *
+     * @param id     the ID of the session
+     * @param model  the model to add attributes to
+     * @param request the HTTP request containing user information
+     * @return the name of the view to render
+     */
     @RequestMapping("/session/{id}")
-    public String session(@PathVariable long id, Model model) {
+    public String session(@PathVariable long id, Model model, HttpServletRequest request) {
+        UUID userId = userService.getUserIdFromRequest(request);
         Session session = sessionRepository.findById(id).orElse(null);
-        if (session == null){
-            model.addAttribute("sessionId", null);
 
-        }else {
+        if (session == null) {
+            model.addAttribute("sessionId", null);
+        } else {
             model.addAttribute("sessionId", id);
         }
 
+        if (userId != null) {
+            User user = userRepository.findById(userId).orElse(null);
+            model.addAttribute("user", user);
+        }
+
+        if (!sessionService.addUserToSession(id, userId)) {
+            // User must join the session first; access denied if not a member
+            return "sessions";
+        }
+
+        model.addAttribute("session_", session);
         return "session";
     }
 
+    /**
+     * Handles requests to "/explore".
+     * Retrieves and manages user information based on cookies and displays all sessions.
+     *
+     * @param request  the HTTP request containing cookies
+     * @param response the HTTP response to set cookies
+     * @param model    the model to add attributes to
+     * @return the name of the view to render
+     */
     @RequestMapping("/explore")
     public String exploreSessions(HttpServletRequest request, HttpServletResponse response, Model model) {
         String tempUserId = null;
         Cookie[] cookies = request.getCookies();
+
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("tempUserId".equals(cookie.getName())) {
@@ -92,29 +132,23 @@ public class MainController {
                 // Create a new user
                 user = new User();
                 userRepository.save(user);
-                tempUserId = user.getId().toString();
 
-                // Set new cookie with the new user's ID
-                Cookie tempIdCookie = new Cookie("tempUserId", tempUserId);
-                tempIdCookie.setPath("/");
-                tempIdCookie.setHttpOnly(true);
-                tempIdCookie.setSecure(true); // Only set this if using HTTPS
-                tempIdCookie.setMaxAge(24 * 60 * 60); // 24 hours
-                response.addCookie(tempIdCookie);
+                Cookie cookie = new Cookie("tempUserId", user.getId().toString());
+                cookie.setHttpOnly(true); // Prevents JavaScript access
+                cookie.setPath("/"); // Available throughout the domain
+                cookie.setMaxAge(60 * 60 * 24); // 1 day
+                response.addCookie(cookie);
             }
 
-            List<Session> sessions = (List<Session>) sessionRepository.findAll();
+            List<Session> sessions = sessionService.getAllSessions();
             model.addAttribute("sessions", sessions);
             model.addAttribute("user", user); // Optionally add user to the model if needed in view
         } catch (Exception e) {
-            // Log the exception
+            // Log the exception and add an error message to the model
             e.printStackTrace();
-            // Add an error message to the model
             model.addAttribute("error", "An error occurred while processing your request.");
         }
 
         return "sessions";
     }
-
-
 }
