@@ -1,10 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Landing Page</title>
+    <meta charset="UTF-8">
+    <title>ZSL Bird Song ID</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body>
-<p>Welcome To ZSL Bird Song ID</p>
-<a href="/explore">Explore Live Sessions</a>
+<div class="container">
+    <h1>Welcome to ZSL Bird Song ID</h1>
+    <p>Our aim is to develop an educational tool to help you learn to identify common British birds based on their songs. This project is part of our science engagement programme, "Refugia", which supports people with lived experience of forced migration. We started this journey with a collaboration with New Art Studio, a therapeutic arts studio for asylum seekers and refugees. Now, we are expanding our reach, working with more groups to create a better learning experience.</p>
+    <p>The tool will provide a pathway for people to engage with their local nature through the identification of bird songs. Whether you're in a group setting or on your own, our goal is to inspire and educate, connecting you with the natural world.</p>
+    <div class="qr-button-container">
+        <a href="/explore">Explore or Create Sessions</a>
+        <canvas id="qr-code"></canvas> <!-- QR Code will be displayed here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // URL to encode in the QR code
+            const url = 'http://192.168.0.34:8080/';
+
+            // Generate QR code
+            QRCode.toCanvas(document.getElementById('qr-code'), url, function (error) {
+                if (error) {
+                    console.error('Error generating QR code:', error);
+                } else {
+                    console.log('QR code generated successfully!');
+                }
+            });
+        });
+    </script>
+</div>
 </body>
 </html>

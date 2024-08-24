@@ -1,0 +1,80 @@
+body {
+    background-color: #e6f7e6; /* Light green background for a soothing effect */
+    color: #006400; /* Dark green text for good contrast and readability */
+    font-family: Arial, sans-serif; /* Use Arial as the primary font */
+    margin: 0; /* Remove default margin */
+    padding: 20px; /* Add padding around the body */
+    height: 100vh; /* Set the body height to fill the viewport */
+    display: flex; /* Use flexbox for centering content */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center children vertically */
+    align-items: center; /* Center children horizontally */
+    text-align: center; /* Center align text */
+}
+
+h1 {
+    font-size: 2.5em; /* Large font size for main heading */
+    color: #004d00; /* Darker green color for the main heading for emphasis */
+    margin-bottom: 20px; /* Space below the heading */
+}
+
+p {
+    font-size: 1.2em; /* Medium font size for paragraph text */
+    color: #006400; /* Dark green text for description */
+    max-width: 800px; /* Limit the paragraph width for readability */
+    line-height: 1.6; /* Increase line height for better readability */
+    margin-bottom: 40px; /* Space below the paragraph */
+}
+
+a {
+    display: inline-block; /* Display as a block element with inline properties */
+    background-color: #008000; /* Green background for the button */
+    color: white; /* White text for contrast against the green background */
+    padding: 10px 20px; /* Padding inside the button */
+    text-decoration: none; /* Remove underline from the link */
+    font-size: 1.2em; /* Medium font size for the button text */
+    border-radius: 4px; /* Rounded corners for the button */
+    box-shadow: 0 0 10px rgba(0, 100, 0, 0.2); /* Slight shadow for depth */
+    margin-top: 20px; /* Space above the button */
+}
+
+a:hover {
+    background-color: #006400; /* Darker green on hover for a visual cue */
+}
+
+.container {
+    max-width: 800px; /* Maximum width for the container */
+    margin: 0 auto; /* Center the container horizontally */
+    padding: 20px; /* Padding inside the container */
+    background-color: #ffffff; /* White background for the container */
+    border-radius: 8px; /* Rounded corners for the container */
+    box-shadow: 0 0 10px rgba(0, 100, 0, 0.2); /* Slight shadow for depth */
+}
+
+#qr-code {
+    margin-top: 20px; /* Space above the QR code */
+}
+
+.qr-button-container {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Vertically center the items */
+    justify-content: center; /* Center the items horizontally */
+    gap: 20px; /* Add space between the QR code and the button */
+    margin-top: 20px; /* Space above the container */
+}
+
+#qr-code {
+    margin: 0; /* Remove margin to align properly */
+}
+
+/* Duplicate selector `a` for link styling */
+a {
+    display: inline-block; /* Ensure it acts like a block element with inline behavior */
+    background-color: #008000; /* Green background for buttons */
+    color: white; /* White text color for contrast */
+    padding: 10px 20px; /* Padding for button size */
+    text-decoration: none; /* Remove underline */
+    font-size: 1.2em; /* Font size for the text inside buttons */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 100, 0, 0.2); /* Shadow effect for depth */
+}
