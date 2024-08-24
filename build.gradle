@@ -1,38 +1,37 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.3.2'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'java' // Applies the Java plugin for building Java projects
+    id 'org.springframework.boot' version '3.3.2' // Applies the Spring Boot plugin for Spring Boot applications
+    id 'io.spring.dependency-management' version '1.1.6' // Manages dependencies and ensures compatible versions
 }
 
-group = 'com'
-version = '0.0.1-SNAPSHOT'
+group = 'com' // Defines the group ID for the project
+version = '0.0.1-SNAPSHOT' // Defines the version of the project
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(17) // Specifies Java 17 as the language version
     }
 }
 
 repositories {
-    mavenCentral()
+    mavenCentral() // Adds Maven Central as the repository to fetch dependencies
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // Adds Spring Data JPA for database access
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Adds Thymeleaf for server-side templating
+    implementation 'org.springframework.boot:spring-boot-starter-web' // Adds Spring MVC for web applications
+    implementation 'org.springframework.boot:spring-boot-starter-websocket' // Adds WebSocket support for real-time communication
+    developmentOnly 'org.springframework.boot:spring-boot-devtools' // Adds Spring Boot DevTools for hot swapping and debugging
+    runtimeOnly 'com.mysql:mysql-connector-j' // Adds MySQL JDBC driver for MySQL database connectivity
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' // Adds Spring Boot test starter for testing support
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // Adds JUnit Platform launcher for running tests
 
-    //implementation 'org.springframework.boot:spring-boot-starter-security'
-    //testImplementation 'org.springframework.security:spring-security-test'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'io.github.cdimascio:dotenv-java:2.2.0' // Adds dotenv-java for loading environment variables from a .env file
+    compileOnly 'org.projectlombok:lombok' // Adds Lombok for reducing boilerplate code in Java (compile-only dependency)
+    annotationProcessor 'org.projectlombok:lombok' // Adds Lombok annotation processor for generating code at compile time
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform() // Configures the test task to use JUnit Platform for running tests
 }
