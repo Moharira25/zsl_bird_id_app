@@ -3,63 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Sessions</title>
-    <script>
-        function joinSession(sessionId) {
-            fetch("/api/sessions/" + sessionId + "/join", {
-                method: "POST"
-            }).then(response => {
-                if (response.ok) {
-                    console.log("Joined session successfully");
-                    // Redirect to the session page or another page
-                    window.location.href = "/session/" + sessionId; // Update this URL to your desired destination
-                } else {
-                    console.error("Failed to join session");
-                }
-            });
-        }
-
-        function createSession(event) {
-            event.preventDefault();
-
-            const formData = new FormData(event.target);
-            const data = {
-                name: formData.get('name')
-            };
-
-            fetch("/api/sessions", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            }).then(response => {
-                if (response.ok) {
-                    console.log("Session created successfully");
-                    window.location.href = "/explore"; // Redirect to the sessions page or another page
-                } else {
-                    console.error("Failed to create session");
-                }
-            });
-        }
-    </script>
+    <link rel="stylesheet" href="/css/sessions.css"> <!-- Link to external CSS file -->
 </head>
 <body>
-<h1>Welcome to the sessions - explore live sessions</h1>
+<h1>ZSL Bird ID</h1> <!-- Main heading for the page -->
 
 <!-- Form to create a session -->
-<div>
-    <h2>Create a new session</h2>
-    <form onsubmit="createSession(event)">
-        <label for="name">Session Name:</label>
-        <input type="text" id="name" name="name" required>
-        <button type="submit">Create Session</button>
+<div class="centered-container">
+    <h2>Create a new session</h2> <!-- Secondary heading for form section -->
+    <form class="centered-form"> <!-- Form for creating a new session -->
+        <div class="centered-form-input"> <!-- Container for form inputs -->
+            <label for="name">Session Name:</label>
+            <input type="text" id="name" name="name" required> <!-- Input for session name -->
+            <label for="type">Session Type</label>
+            <select id="type" name="type"> <!-- Dropdown for session type -->
+                <option value="individual">Individual</option> <!-- Option for individual session -->
+                <option value="group">Group</option> <!-- Option for group session -->
+            </select>
+        </div>
+        <button type="submit">Create Session</button> <!-- Submit button for form -->
     </form>
 </div>
 
-<!-- List of sessions -->
-<div th:each="s : ${sessions}">
-    <button th:onclick="'joinSession(\'' + ${s.id} + '\')'" th:text="'Join Session ' + ${s.name}">Join Session</button>
+<!-- Thymeleaf template code for displaying sessions -->
+<div th:each="s : ${sessions}" class="centered-container sessions"> <!-- Loop through sessions -->
+    <div th:if="${s.active}"> <!-- Check if session is active -->
+        <!-- Form to join a session -->
+        <form th:if="${s.individual == false || s.admin == user}" th:action="@{/api/sessions/{sessionId}/join(sessionId=${s.id})}" method="post" class="centered-form">
+            <div th:if="${!user.inSession}"> <!-- Check if user is not in any session -->
+                <!-- Button to join session -->
+                <button th:unless="${s.userList.contains(user)}" type="submit" th:text="'Join Session ' + ${s.name}">Join Session</button>
+            </div>
+            <div th:unless="${!user.inSession}"> <!-- Check if user is in a session -->
+                <!-- Button to rejoin session -->
+                <button th:if="${s.userList.contains(user)}" type="submit" th:text="'Rejoin Session ' + ${s.name}">Join Session</button>
+                <!-- Disabled button if user cannot join -->
+                <button th:unless="${s.userList.contains(user)}" type="submit" th:text="'Join Session ' + ${s.name}" disabled>Join Session</button>
+            </div>
+        </form>
+    </div>
 </div>
 
+<script src="/js/sessions.js"></script> <!-- Link to external JavaScript file -->
 </body>
 </html>
