@@ -13,6 +13,7 @@ This project uses **Spring Boot** for the backend, **Thymeleaf** for server-side
 - [Prerequisites](#prerequisites)
 - [Setup and Installation](#setup-and-installation)
 - [Configuration](#configuration)
+- [Bird Data Processing with vidwav](#bird-data-processing-with-vidwav)
 - [Bird Data Directory](#bird-data-directory)
 - [Running the Application](#running-the-application)
 - [Usage](#usage)
@@ -116,6 +117,14 @@ The application uses application.properties to manage its configuration. Key set
  *Database Configuration**: Database URL, username, and password.
 
  *Server IP and Port**: Define the server IP and port. The SERVER_IP must be accessible to clients using the QR code.
+
+## Bird Data Processing with `vidwav`
+
+For processing bird data, you can use the [vidwav](https://github.com/Moharira25/vidwav) repository. This tool generates spectrograms from WAV files and creates corresponding video files. It is particularly useful for visualizing bird songs and integrating them into your projects. The `vidwav` script reads a WAV file, generates a spectrogram, and combines it with the audio to produce a video file.
+
+You can obtain bird audio data from various sources, including [xeno-canto](https://www.xeno-canto.org), which provides a vast collection of bird sounds from around the world. This can be a valuable resource for your bird song analysis.
+
+You can customize the frame rate and colormap used in the spectrogram. This tool can be an excellent addition for visualizing and analyzing bird song data, complementing the bird identification functionality of this application.
 
 ## Bird Data Directory
 The application initializes bird data from a specified directory on the server. You need to set the path to this directory in the BirdInitializer component. Update the baseDirectory variable in BirdInitializer with the path where bird files are stored.
