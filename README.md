@@ -92,24 +92,16 @@ SERVER_PORT=8080
 
 4. **Install Dependencies**:
 
-*. Ensure you have Maven installed and run the following command to download the project dependencies:
+   Ensure you have Gradle installed. If you are using the Gradle Wrapper (`./gradlew`), it will handle the Gradle version for you. To download the project dependencies and prepare the project, run:
 
-```bash
+   ```bash
+   ./gradlew build
+   ```
+   To compile the project and build the executable JAR file, use:
 
-./mvnw clean install
-
-```
-
-5. **Build the Project**:
-
-* Use Maven to compile the project and build the executable JAR file:
-
-```bash
-
-./mvnw clean package
-
-```
-
+   ```bash
+   ./gradlew clean build
+   ```
 ## Configuration
 
 The application uses application.properties to manage its configuration. Key settings include:
@@ -127,15 +119,44 @@ You can obtain bird audio data from various sources, including [xeno-canto](http
 You can customize the frame rate and colormap used in the spectrogram. This tool can be an excellent addition for visualizing and analyzing bird song data, complementing the bird identification functionality of this application.
 
 ## Bird Data Directory
-The application initializes bird data from a specified directory on the server. You need to set the path to this directory in the BirdInitializer component. Update the baseDirectory variable in BirdInitializer with the path where bird files are stored.
+
+The application initializes bird data from a specified directory on the server. You need to set the path to this directory in the `BirdInitializer` component. Update the `baseDirectory` variable in `BirdInitializer` with the path where bird files are stored.
 
 Example:
 
 ```java
-Copy code
 private final String baseDirectory = "C:\\Path\\To\\Birds";
 ```
-The BirdInitializer component scans this directory for bird data files (audio, image, video) and updates the database accordingly. Ensure the directory structure is as expected, with directories for each bird and optional subdirectories for additional options.
+The BirdInitializer component scans this directory for bird data files (audio, image, video) and updates the database accordingly. Ensure the directory structure includes the following files:
+
+* Audio File: WAV file of the bird's call or song.
+* Main Video File: MP4 video file containing the primary video of the bird.
+* Image File: Image file of the bird (JPEG, PNG, etc.).
+* Options Directory (optional): A subdirectory containing additional video options for the bird. Each option should be an MP4 file.
+### Suggested Directory Structure
+Here is an example of how your bird data directory should be structured:
+
+```vbnet
+C:\Birds
+│
+├── [Bird_Name]
+│   ├── [Bird_Name].wav        # Audio file
+│   ├── [Bird_Name] - main.mp4 # Main video file
+│   ├── [Bird_Name].jpg        # Image file
+│   └── options
+│       ├── [Bird_Name] - option 1.mp4
+│       ├── [Bird_Name] - option 2.mp4
+│       ├── [Bird_Name] - option 3.mp4
+│       └── [Bird_Name] - option 4.mp4
+```
+* C:\Birds: The root directory containing all bird folders.
+* [Bird_Name]: Subdirectories for each bird species.
+* [Bird_Name].wav: Audio file for the bird.
+* [Bird_Name] - main.mp4: Main video file for the bird.
+* [Bird_Name].jpg: Image file for the bird.
+* options: Subdirectory containing additional video options for the bird.
+### Custom Directory Structure
+You can modify the directory structure as needed. However, if you alter the structure, you must update the BirdInitializer file to reflect these changes and ensure that the application correctly identifies and processes the files.
 
 ## Running the Application
 
@@ -149,7 +170,7 @@ The BirdInitializer component scans this directory for bird data files (audio, i
 
 ```bash
 
-./mvnw spring-boot:run
+./gradlew bootRun
 
 ```
 
@@ -157,7 +178,7 @@ The BirdInitializer component scans this directory for bird data files (audio, i
 
 ```bash
 
-java -jar target/zsl-bird-id-0.0.1-SNAPSHOT.jar
+java -jar build/libs/zsl-bird-id-0.0.1-SNAPSHOT.jar
 
 ```
 
