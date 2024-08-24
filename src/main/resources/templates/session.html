@@ -1,58 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Live Q&A</title>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Dynamically set the session ID
-            var sessionId = [[${sessionId}]];
-
-            // Initialize WebSocket connection
-            var socket = new WebSocket("ws://localhost:8080/ws/sessions/" + sessionId);
-
-            socket.onmessage = function(event) {
-                var message = event.data;
-                console.log("Received message: " + message);
-                var messageContainer = document.getElementById("messageContainer");
-                var messageElement = document.createElement("p");
-                messageElement.textContent = message;
-                messageContainer.appendChild(messageElement);
-            };
-
-            socket.onopen = function() {
-                console.log("WebSocket connection established");
-            };
-
-            socket.onclose = function() {
-                console.log("WebSocket connection closed");
-            };
-
-            socket.onerror = function(error) {
-                console.error("WebSocket error: ", error);
-            };
-
-            // Handle form submission
-            document.getElementById('questionForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                var questionInput = document.getElementById('questionInput');
-                var question = questionInput.value;
-                if (question) {
-                    socket.send(question);
-                    questionInput.value = ''; // Clear the input field
-                }
-            });
-        });
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures responsive design -->
+    <title>Bird Song Quiz</title> <!-- Page title -->
+    <link rel="stylesheet" href="/css/session.css"> <!-- Link to external CSS file for styling -->
 </head>
 <body>
-<h1>Live Q&A Sessions</h1>
-<div id="messageContainer"></div>
-<p>Welcome to the session</p>
-<form id="questionForm">
-    <label for="questionInput">Ask a question:</label>
-    <input type="text" id="questionInput" required>
-    <button type="submit">Send</button>
-</form>
+<div class="container"> <!-- Main container for content -->
+    <h1>Bird Song Quiz</h1> <!-- Main heading -->
+    <p>Welcome to the session</p> <!-- Introduction paragraph -->
+
+    <!-- Button group for session controls -->
+    <div class="button-group">
+        <!-- Conditional content for session manager -->
+        <div th:if="${user.managedSession == session_}">
+            <!-- Form for changing question; displayed unless it's the last question -->
+            <form id="changeQuestionForm" th:unless="${session_.questionIndex + 1 >= session_.questionList.size()}">
+                <input type="hidden" name="sessionId" th:value="${sessionId}"> <!-- Hidden field for session ID -->
+                <input type="hidden" name="currentIndex" id="currentIndex" th:value="${session_.questionIndex}"> <!-- Hidden field for current question index -->
+                <button type="button" id="nextQuestionButton" class="btn">Next Question</button> <!-- Button to go to the next question -->
+            </form>
+
+            <!-- Form to end the session; displayed if it's the last question -->
+            <form id="endSessionForm" th:if="${session_.questionIndex + 1 >= session_.questionList.size()}">
+                <input type="hidden" name="sessionId" th:value="${sessionId}"> <!-- Hidden field for session ID -->
+                <button type="button" id="endSessionButton" class="btn">End Session</button> <!-- Button to end the session -->
+            </form>
+        </div>
+
+        <!-- Form to leave the session -->
+        <form id="leaveSessionForm">
+            <input type="hidden" name="sessionId" th:value="${sessionId}"> <!-- Hidden field for session ID -->
+            <button type="button" id="leaveSessionButton" class="btn">Leave Session</button> <!-- Button to leave the session -->
+        </form>
+    </div>
+
+    <!-- Session statistics, visible only to the session manager -->
+    <div th:if="${user.managedSession == session_}" id="sessionStats" class="stats hidden">
+        <h2>Session Statistics</h2> <!-- Heading for statistics -->
+        <p id="minScore"></p> <!-- Placeholder for minimum score -->
+        <p id="maxScore"></p> <!-- Placeholder for maximum score -->
+        <p id="averageScore"></p> <!-- Placeholder for average score -->
+        <p id="medianScore"></p> <!-- Placeholder for median score -->
+    </div>
+
+    <!-- Loop through questions for the session -->
+    <div th:each="question, questionStat : ${session_.questionList}">
+        <!-- Container for a question; displayed only if it's the current question -->
+        <div class="question-container question"
+             th:attr="data-question-index=${questionStat.index}"
+             th:if="${questionStat.index == session_.questionIndex}">
+
+            <p th:text="'Question ' + ${questionStat.index + 1}">Question</p> <!-- Display question number -->
+
+            <!-- Button to play the bird song audio -->
+            <button class="play-button" th:onclick="'playAudio(' + ${questionStat.index} + ')'">PLAY SONG #[[${questionStat.index + 1}]]</button>
+
+            <!-- Audio element for bird song -->
+            <audio th:id="'audio-' + ${questionStat.index}" style="display: none;">
+                <source th:src="@{/files/{filename}(filename=${question.mainBird.mediaUrl})}" type="audio/mpeg"> <!-- Source for audio file -->
+                Your browser does not support the audio element.
+            </audio>
+
+            <!-- Options for selecting the correct video -->
+            <div class="video-options">
+                <div th:each="option, optionStat : ${question.options}"
+                     class="video-card"
+                     th:attr="data-option-id=${option.id}"
+                     th:onclick="|selectVideo(${option.id}, ${question.mainBird.id}, ${questionStat.index}, ${question.id}, ${optionStat.index})|">
+                    <div class="spectrogram">
+                        <!-- Video element for bird spectrogram or video -->
+                        <video width="100%" height="100">
+                            <source th:src="@{/files/{filename}(filename=${question.getBirdVideoUrls().get(option)})}" type="video/mp4"> <!-- Source for video file -->
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <img th:src="@{/files/{filename}(filename=${option.imageUrl})}" alt="Bird image"> <!-- Image of bird -->
+                    <div class="bird-name" th:text="'Bird: ' + ${option.birdName}"></div> <!-- Bird name display -->
+                </div>
+            </div>
+            <div class="feedback"></div> <!-- Placeholder for feedback after an answer -->
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript variable for session ID -->
+<script th:inline="javascript">
+    var sessionId = /*[[${sessionId}]]*/ '';
+</script>
+<script src="/js/session.js"></script> <!-- Link to external JavaScript file for functionality -->
 </body>
 </html>
