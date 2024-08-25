@@ -80,38 +80,46 @@ public class SessionService {
      * @return True if the session was successfully ended, false otherwise
      */
     public boolean endSession(long id) {
+        // Fetch the session from the repository
         Session session = sessionRepository.findById(id).orElseThrow(() -> new RuntimeException("Session not found"));
 
+        // Check if the session is active
         if (session.isActive()) {
+            // Get the admin of the session
+            User admin = session.getAdmin();
+
+            // Calculate scores excluding the admin
             List<Integer> scores = session.getUserList().stream()
-                    .map(User::getSessionScore)
+                    .filter(user -> !user.equals(admin)) // Exclude the admin
+                    .map(User::getSessionScore) // Map to scores
                     .collect(Collectors.toList());
 
             if (!scores.isEmpty()) {
+                // Calculate statistics
                 int minScore = Collections.min(scores);
                 int maxScore = Collections.max(scores);
                 double averageScore = scores.stream().mapToInt(Integer::intValue).average().orElse(0.0);
                 int medianScore = calculateMedian(scores);
 
+                // Update session statistics
                 session.setMinScore(minScore);
                 session.setMaxScore(maxScore);
                 session.setAverageScore((int) Math.round(averageScore));
                 session.setMedianScore(medianScore);
-
-                session.setActive(false);
-                session.setAdmin(null);
-                sessionRepository.save(session);
-                return true;
-            } else {
-                session.setActive(false);
-                session.setAdmin(null);
-                sessionRepository.save(session);
-                return false;
             }
+
+            // Deactivate session and clear admin
+            session.setActive(false);
+            session.setAdmin(null);
+
+            // Save the session
+            sessionRepository.save(session);
+            return true;
         } else {
             return false;
         }
     }
+
 
     /**
      * Calculates the median score from a list of scores.
@@ -144,9 +152,7 @@ public class SessionService {
             throw new RuntimeException("Session is not active");
         }
 
-        if (user.getManagedSession() == session && !session.isIndividual()) {
-            return true;
-        }
+
 
         boolean userInSession = session.getUserList().contains(user);
         if (!userInSession && !user.isInSession()) {
