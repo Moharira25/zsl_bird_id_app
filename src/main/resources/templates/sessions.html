@@ -36,7 +36,7 @@
             </div>
             <!-- Hidden inputs for user session status -->
             <input type="hidden" id="userInSession" name="userInSession" th:value="${user.inSession}"/>
-            <div th:if="${user.currentSession != null}" >
+            <div th:if="${user.currentSession != null}">
                 <input type="hidden" id="userInSessionActive" name="userInSessionActive" th:value="${user.currentSession.active}"/>
                 <input type="hidden" id="currentSessionId" name="currentSessionId" th:value="${user.currentSession.id}"/>
             </div>
@@ -45,8 +45,8 @@
     </div>
 
     <!-- Thymeleaf template code for displaying sessions -->
-    <div th:each="s : ${sessions}"> <!-- Loop through sessions -->
-        <div th:if="${s.active}" class="centered-container sessions"> <!-- Check if session is active -->
+    <div th:each="s : ${sessions}" th:if="${s.active && (!s.individual || s.admin == user || s.userList.contains(user))}"> <!-- Check if session is visible to the user -->
+        <div class="centered-container sessions"> <!-- Container for active sessions -->
             <!-- Form to join a session -->
             <form th:if="${!s.individual || s.admin == user}" th:action="@{/api/sessions/{sessionId}/join(sessionId=${s.id})}" method="post" class="centered-form">
                 <div th:if="${!user.inSession}"> <!-- Check if user is not in any session -->
