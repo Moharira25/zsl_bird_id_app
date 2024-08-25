@@ -33,6 +33,6 @@ public class User {
 
     private boolean inSession;  // Indicates whether the user is currently in a session
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Session CurrentSession;  // The session that the user is currently participating in
 }
