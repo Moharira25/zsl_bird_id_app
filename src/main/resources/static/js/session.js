@@ -112,13 +112,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             currentQuestion.classList.add('hidden');
                         }
 
-                        const statsContainer = document.getElementById('sessionStats');
-                        if (statsContainer) {
-                            statsContainer.classList.remove('hidden');
-                            document.getElementById('minScore').innerText = `Minimum Score: ${data.minScore}`;
-                            document.getElementById('maxScore').innerText = `Maximum Score: ${data.maxScore}`;
-                            document.getElementById('averageScore').innerText = `Average Score: ${data.averageScore}`;
-                            document.getElementById('medianScore').innerText = `Median Score: ${data.medianScore}`;
+                        if (!data.isIndividual){
+                            const statsContainer = document.getElementById('sessionStats');
+                            if (statsContainer) {
+                                statsContainer.classList.remove('hidden');
+                                document.getElementById('minScore').innerText = `Minimum Score: ${data.minScore}`;
+                                document.getElementById('maxScore').innerText = `Maximum Score: ${data.maxScore}`;
+                                document.getElementById('averageScore').innerText = `Average Score: ${data.averageScore}`;
+                                document.getElementById('medianScore').innerText = `Median Score: ${data.medianScore}`;
+                                document.getElementById('numberOfParticipants').innerText = `Number of Participants: ${data.numberOfParticipants}`;
+                            }
                         }
                     } else {
                         alert('Failed to end session or no scores available.');
@@ -217,9 +220,11 @@ function sendAnswerToServer(optionId, mainBirdId, questionIndex, questionId) {
                 const feedback = questionContainer.querySelector('.feedback');
                 const videoCard = questionContainer.querySelector(`.video-card[data-option-id="${optionId}"]`);
 
+
                 if (feedback) {
                     if (data.message === 'Correct') {
                         feedback.textContent = "Correct answer!";
+                        document.getElementById('userScore').innerText = `Score : ${data.score}`;
                         if (videoCard) videoCard.classList.add('correct');
                     } else if (data.message === 'Incorrect') {
                         feedback.textContent = "Incorrect answer.";

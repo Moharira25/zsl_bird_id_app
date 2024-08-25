@@ -15,6 +15,7 @@ public class SessionStats {
     private int maxScore;     // Maximum score achieved in the session
     private int averageScore; // Average score of all participants in the session
     private int medianScore;  // Median score of all participants in the session
+    private int numberOfParticipants; // Number of all participants in the session
 
     /**
      * Constructor to initialize all fields of the SessionStats class.
@@ -23,11 +24,13 @@ public class SessionStats {
      * @param maxScore Maximum score achieved in the session
      * @param averageScore Average score of all participants in the session
      * @param medianScore Median score of all participants in the session
+     * @param numberOfParticipants; // Number of all participants in the session
      */
-    public SessionStats(int minScore, int maxScore, int averageScore, int medianScore) {
+    public SessionStats(int minScore, int maxScore, int averageScore, int medianScore, int numberOfParticipants) {
         this.minScore = minScore;
         this.maxScore = maxScore;
         this.averageScore = averageScore;
         this.medianScore = medianScore;
+        this.numberOfParticipants = numberOfParticipants;
     }
 }

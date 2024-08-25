@@ -175,7 +175,7 @@ public class SessionService {
         int averageScore = session.getAverageScore();
         int medianScore = session.getMedianScore();
 
-        return new SessionStats(minScore, maxScore, averageScore, medianScore);
+        return new SessionStats(minScore, maxScore, averageScore, medianScore, session.getUserList().size());
     }
 
     /**

@@ -9,7 +9,6 @@
 <body>
 <div class="container"> <!-- Main container for content -->
     <h1>Bird Song Quiz</h1> <!-- Main heading -->
-    <p>Welcome to the session</p> <!-- Introduction paragraph -->
 
     <!-- Button group for session controls -->
     <div class="button-group">
@@ -37,12 +36,18 @@
     </div>
 
     <!-- Session statistics, visible only to the session manager -->
-    <div th:if="${user.managedSession == session_}" id="sessionStats" class="stats hidden">
+    <div id="sessionStats" class="stats hidden">
         <h2>Session Statistics</h2> <!-- Heading for statistics -->
-        <p id="minScore"></p> <!-- Placeholder for minimum score -->
-        <p id="maxScore"></p> <!-- Placeholder for maximum score -->
-        <p id="averageScore"></p> <!-- Placeholder for average score -->
-        <p id="medianScore"></p> <!-- Placeholder for median score -->
+        <div th:if="${session_.individual || !(user.managedSession == session_)}">
+            <p id="userScore" th:text="'Score: ' + ${user.sessionScore}"></p>
+        </div>
+        <div th:if="${user.managedSession == session_ && !session_.individual}">
+            <p id="minScore"></p> <!-- Placeholder for minimum score -->
+            <p id="maxScore"></p> <!-- Placeholder for maximum score -->
+            <p id="averageScore"></p> <!-- Placeholder for average score -->
+            <p id="medianScore"></p> <!-- Placeholder for median score -->
+            <p id="numberOfParticipants"></p> <!-- Placeholder for number of Participants -->
+        </div>
     </div>
 
     <!-- Loop through questions for the session -->

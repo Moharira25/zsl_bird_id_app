@@ -113,6 +113,9 @@ public class SessionController {
             // Log session ID for debugging purposes
             System.out.println("Attempting to end session with ID: " + sessionId);
 
+            //getting the session from the repo
+            Session session = sessionService.findSessionById(sessionId);
+
             boolean isEnded = sessionService.endSession(sessionId);
 
             if (isEnded) {
@@ -126,6 +129,8 @@ public class SessionController {
                 response.put("maxScore", stats.getMaxScore());
                 response.put("averageScore", stats.getAverageScore());
                 response.put("medianScore", stats.getMedianScore());
+                response.put("numberOfParticipants", stats.getNumberOfParticipants());
+                response.put("isIndividual", session.isIndividual());
 
                 return ResponseEntity.ok(response);
             } else {
