@@ -31,6 +31,7 @@ public class Bird {
     private String imageUrl;  // URL or path to the image file representing the bird
 
     private boolean isMain;   // Flag indicating whether this bird is the main bird or one of its options
+    private String wikipediaUrl; // A 'Wikipedia' Url that contains info about the bird.
 
     @OneToMany
     private List<Bird> options = new ArrayList<>(); // List of option birds related to the main bird

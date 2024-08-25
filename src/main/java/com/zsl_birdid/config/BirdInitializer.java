@@ -7,7 +7,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -54,6 +57,40 @@ public class BirdInitializer implements ApplicationRunner {
     }
 
     /**
+     * Reads the Wikipedia URL from the only .txt file in the specified bird directory.
+     *
+     * @param birdDir The directory containing bird-specific files, including the Wikipedia URL file.
+     * @return The Wikipedia URL as a String if found, or null if no .txt file is present or an error occurs.
+     */
+    private String readWikipediaUrl(File birdDir) {
+        // List all files in the birdDir directory that end with the .txt extension.
+        // The lambda expression filters files to include only those with a .txt extension.
+        File[] txtFiles = birdDir.listFiles((dir, name) -> name.endsWith(".txt"));
+
+        // Check if the list of .txt files is not null and contains exactly one file.
+        // This ensures there is exactly one .txt file in the directory.
+        if (txtFiles != null && txtFiles.length == 1) {
+            // Get the only .txt file from the array.
+            File urlFile = txtFiles[0];
+
+            // Attempt to read the contents of the file using BufferedReader.
+            // BufferedReader is used to read the file efficiently.
+            try (BufferedReader reader = new BufferedReader(new FileReader(urlFile))) {
+                // Read the first line from the file.
+                // Assuming the file contains the URL on the first line.
+                return reader.readLine().trim(); // Remove any leading and trailing whitespace from the URL.
+            } catch (IOException e) {
+                // Print the stack trace if an IOException occurs while reading the file.
+                // This helps in debugging issues related to file reading.
+                e.printStackTrace();
+            }
+        }
+        // Return null if no .txt file is found or if there is an error.
+        return null;
+    }
+
+
+    /**
      * Creates a Bird entity from the given directory and bird name.
      *
      * @param birdDir   Directory containing bird files
@@ -83,6 +120,12 @@ public class BirdInitializer implements ApplicationRunner {
         if (mainVideoFile != null) {
             bird.setVideoUrl(relativePath(mainVideoFile.toPath()));
         }
+        // Set Wikipedia URL
+        String wikipediaUrl = readWikipediaUrl(birdDir);
+        if (wikipediaUrl != null) {
+            bird.setWikipediaUrl(wikipediaUrl);
+        }
+
         bird.setMain(true);
 
         // Add options if available
@@ -128,6 +171,7 @@ public class BirdInitializer implements ApplicationRunner {
                         optionBird.setBirdName(bird.getBirdName());  // Same name as parent
                         optionBird.setMediaUrl(relativePath(optionFile.toPath()));
                         optionBird.setImageUrl(bird.getImageUrl());  // Use the same image as parent
+                        optionBird.setWikipediaUrl(bird.getWikipediaUrl()); //Use the same wiki url as parent
                         optionBird.setMain(false);
 
                         // Save the option bird
