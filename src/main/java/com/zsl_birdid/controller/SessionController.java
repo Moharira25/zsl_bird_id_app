@@ -8,7 +8,9 @@ import com.zsl_birdid.dto.SessionStats;
 import com.zsl_birdid.services.SessionService;
 import com.zsl_birdid.services.SessionUserManager;
 import com.zsl_birdid.services.UserService;
+import com.zsl_birdid.websocket.MyWebSocketHandler;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,7 @@ public class SessionController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final SessionUserManager sessionUserManager;
+    //private final MyWebSocketHandler myWebSocketHandler;
 
     /**
      * Constructor for SessionController.
@@ -37,12 +40,15 @@ public class SessionController {
      * @param userRepository         Repository for User entities
      * @param userService            Service for managing users
      * @param sessionUserManager     Service for managing users in sessions
+     * @param myWebSocketHandler     websocket handler
      */
-    public SessionController(SessionService sessionService, UserRepository userRepository, UserService userService, SessionUserManager sessionUserManager) {
+    @Autowired
+    public SessionController(SessionService sessionService, UserRepository userRepository, UserService userService, SessionUserManager sessionUserManager, MyWebSocketHandler myWebSocketHandler) {
         this.sessionService = sessionService;
         this.userRepository = userRepository;
         this.userService = userService;
         this.sessionUserManager = sessionUserManager;
+        //this.myWebSocketHandler = myWebSocketHandler;
     }
 
     /**
@@ -157,7 +163,14 @@ public class SessionController {
     public ResponseEntity<?> leaveSession(HttpServletRequest request, @PathVariable long sessionId) {
         try {
             UUID userId = userService.getUserIdFromRequest(request);
+            //Session session = sessionService.findSessionById(sessionId);
+            //User user = userService.findById(userId);
+            //boolean userWasAdmin = user == session.getAdmin();
             sessionUserManager.handleUserLeavingSession(userId, sessionId);
+            /** if (session.isActive() && userWasAdmin) {
+                String message = "reload-admin";
+                myWebSocketHandler.sendMessageToSession(sessionId, message);
+            }**/
             return ResponseEntity.ok(Collections.singletonMap("success", "User has left the session successfully."));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", e.getMessage()));
