@@ -1,7 +1,7 @@
 package com.zsl_birdid.controller;
 
 
-import com.zsl_birdid.Repo.SessionRepository;
+
 import com.zsl_birdid.Repo.UserRepository;
 import com.zsl_birdid.domain.Session;
 import com.zsl_birdid.domain.User;
@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -23,7 +24,6 @@ import java.util.UUID;
 public class MainController {
 
     private final UserRepository userRepository;
-    private final SessionRepository sessionRepository;
     private final SessionService sessionService;
     private final UserService userService;
 
@@ -32,13 +32,11 @@ public class MainController {
      * Initializes repositories and services.
      *
      * @param userRepository   Repository for User entities
-     * @param sessionRepository Repository for Session entities
      * @param sessionService   Service for managing sessions
      * @param userService      Service for managing users
      */
-    public MainController(UserRepository userRepository, SessionRepository sessionRepository, SessionService sessionService, UserService userService) {
+    public MainController(UserRepository userRepository, SessionService sessionService, UserService userService) {
         this.userRepository = userRepository;
-        this.sessionRepository = sessionRepository;
         this.sessionService = sessionService;
         this.userService = userService;
     }
@@ -55,6 +53,19 @@ public class MainController {
     }
 
     /**
+     * Handles requests to the error page.
+     * This endpoint is designed to be called when an error occurs in the application.
+     * It returns the name of the error page view, which should be resolved to an
+     * appropriate error page template by Spring's view resolver.
+     *
+     * @return String The name of the error page view ("errorPage")
+     */
+    @GetMapping("/error_")
+    public String handleError() {
+        return "errorPage";
+    }
+
+    /**
      * Handles requests to "/session/{id}".
      * Retrieves a Session entity by ID and checks if the current user is allowed to access it.
      *
@@ -65,28 +76,30 @@ public class MainController {
      */
     @RequestMapping("/session/{id}")
     public String session(@PathVariable long id, Model model, HttpServletRequest request) {
-        UUID userId = userService.getUserIdFromRequest(request);
-        Session session = sessionRepository.findById(id).orElse(null);
+        try {
+            UUID userId = userService.getUserIdFromRequest(request);
+            Session session = sessionService.findSessionById(id);
 
-        if (session == null) {
-            model.addAttribute("sessionId", null);
-        } else {
+            if (userId != null) {
+                User user = userService.findById(userId);
+                model.addAttribute("user", user);
+            }
+
+            if (!sessionService.addUserToSession(id, userId)) {
+                // User must join the session first; access denied if not a member
+                return "sessions";
+            }
+
             model.addAttribute("sessionId", id);
+            model.addAttribute("session_", session);
+            return "session";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "An error occurred while processing your request.");
+            return "errorPage";
         }
-
-        if (userId != null) {
-            User user = userRepository.findById(userId).orElse(null);
-            model.addAttribute("user", user);
-        }
-
-        if (!sessionService.addUserToSession(id, userId)) {
-            // User must join the session first; access denied if not a member
-            return "sessions";
-        }
-
-        model.addAttribute("session_", session);
-        return "session";
     }
+
 
     /**
      * Handles requests to "/explore".
@@ -99,19 +112,19 @@ public class MainController {
      */
     @RequestMapping("/explore")
     public String exploreSessions(HttpServletRequest request, HttpServletResponse response, Model model) {
-        String tempUserId = null;
-        Cookie[] cookies = request.getCookies();
+        try {
+            String tempUserId = null;
+            Cookie[] cookies = request.getCookies();
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("tempUserId".equals(cookie.getName())) {
-                    tempUserId = cookie.getValue();
-                    break;
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("tempUserId".equals(cookie.getName())) {
+                        tempUserId = cookie.getValue();
+                        break;
+                    }
                 }
             }
-        }
 
-        try {
             User user = null;
             if (tempUserId != null) {
                 // Try to find the user in the database
@@ -143,12 +156,11 @@ public class MainController {
             List<Session> sessions = sessionService.getAllSessions();
             model.addAttribute("sessions", sessions);
             model.addAttribute("user", user); // Optionally add user to the model if needed in view
+            return "sessions";
         } catch (Exception e) {
-            // Log the exception and add an error message to the model
             e.printStackTrace();
             model.addAttribute("error", "An error occurred while processing your request.");
+            return "errorPage";
         }
-
-        return "sessions";
     }
 }
