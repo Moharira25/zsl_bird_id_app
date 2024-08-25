@@ -177,6 +177,34 @@ h1 {
     text-align: center; /* Centers the text */
 }
 
+#sessionStats {
+    background-color: #006400; /* Dark green background */
+    color: white;
+    padding: 10px; /* Padding for content */
+    border-radius: 5px; /* Rounded corners */
+    margin-bottom: 20px; /* Space below the stats */
+}
+
+.stats-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.stats-row {
+    display: flex;
+    gap: 10px; /* Adds space between each stat */
+    justify-content: space-between; /* Distributes stats evenly in the row */
+    flex-wrap: wrap; /* Allows stats to wrap on smaller screens */
+}
+
+.stats-row p {
+    margin: 0;
+    padding: 5px 10px; /* Adds padding around each stat */
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly different background color for each stat */
+    border-radius: 3px; /* Rounded corners */
+}
+
+
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
     .video-card {

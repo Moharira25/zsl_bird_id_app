@@ -38,17 +38,21 @@
     <!-- Session statistics, visible only to the session manager -->
     <div id="sessionStats" class="stats hidden">
         <h2>Session Statistics</h2> <!-- Heading for statistics -->
-        <div th:if="${session_.individual || !(user.managedSession == session_)}">
-            <p id="userScore" th:text="'Score: ' + ${user.sessionScore}"></p>
-        </div>
-        <div th:if="${user.managedSession == session_ && !session_.individual}">
-            <p id="minScore"></p> <!-- Placeholder for minimum score -->
-            <p id="maxScore"></p> <!-- Placeholder for maximum score -->
-            <p id="averageScore"></p> <!-- Placeholder for average score -->
-            <p id="medianScore"></p> <!-- Placeholder for median score -->
-            <p id="numberOfParticipants"></p> <!-- Placeholder for number of Participants -->
+        <div class="stats-container">
+            <div th:if="${session_.individual || !(user.managedSession == session_)}">
+                <p id="userScore" th:text="'Score: ' + ${user.sessionScore}"></p>
+            </div>
+            <div th:if="${user.managedSession == session_ && !session_.individual}" class="stats-row">
+                <p id="minScore"></p> <!-- Placeholder for minimum score -->
+                <p id="maxScore"></p> <!-- Placeholder for maximum score -->
+                <p id="averageScore"></p> <!-- Placeholder for average score -->
+                <p id="medianScore"></p> <!-- Placeholder for median score -->
+                <p id="numberOfParticipants"></p> <!-- Placeholder for number of Participants -->
+                <p th:unless="${session_.questionIndex + 1 >= session_.questionList.size()}" th:text="'Active Users: ' + ${session_.userList.size() - 1}"></p>
+            </div>
         </div>
     </div>
+
 
     <!-- Loop through questions for the session -->
     <div th:each="question, questionStat : ${session_.questionList}">
