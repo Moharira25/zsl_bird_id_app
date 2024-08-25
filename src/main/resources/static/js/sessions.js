@@ -9,6 +9,52 @@ document.addEventListener('DOMContentLoaded', function() {
     function createSession(event) {
         event.preventDefault(); // Prevent form submission
 
+        // Read hidden inputs
+        const userInSession = document.getElementById('userInSession').value === 'true';
+
+        if (userInSession) {
+            const userInSessionActive = document.getElementById('userInSessionActive').value === 'true';
+            if (userInSessionActive) {
+                if (!confirm("You are already in an active session. Creating a new session will mean leaving the current one. Do you want to proceed?")) {
+                    return; // User decided not to proceed
+                }
+            }
+            // Automatically leave the current session if it is inactive or user confirmed to leave
+            leaveCurrentSession().then(() => {
+                proceedWithSessionCreation(event);
+            }).catch(() => {
+                window.location.href = '/error_';
+            });
+        } else {
+            proceedWithSessionCreation(event);
+        }
+    }
+
+    // Function to leave the current session
+    function leaveCurrentSession() {
+        const sessionId = document.getElementById('currentSessionId').value;
+        return fetch(`${baseUrl}/api/sessions/${sessionId}/leave`, {
+            method: 'POST',
+            credentials: 'include', // Ensures cookies are sent
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ sessionId })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to leave session');
+                }
+                console.log("Successfully left the session.");
+            })
+            .catch(error => {
+                console.error("Error leaving session:", error.message);
+                throw error; // Re-throw the error to be caught in the calling function
+            });
+    }
+
+    // Function to proceed with creating a session
+    function proceedWithSessionCreation(event) {
         // Collect form data
         const formData = new FormData(event.target);
         const data = {
@@ -32,14 +78,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log("Session created successfully");
                     window.location.href = "/explore"; // Redirect to the sessions page or another page
                 } else {
-                    // Handle failed session creation
-                    return response.text().then(text => {
-                        console.error("Failed to create session:", text);
-                    });
+                    throw new Error('Failed to create session');
                 }
             })
             .catch(error => {
-                console.error("Network error:", error); // Log network error
+                console.error("Error creating session:", error.message);
+                window.location.href = '/error_'; // Redirect to error page
             });
     }
 

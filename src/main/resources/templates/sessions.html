@@ -11,7 +11,7 @@
 <!-- Form to create a session -->
 <div class="centered-container">
     <h2>Create a new session</h2> <!-- Secondary heading for form section -->
-    <form class="centered-form"> <!-- Form for creating a new session -->
+    <form class="centered-form" id="createSessionForm"> <!-- Form for creating a new session -->
         <div class="centered-form-input"> <!-- Container for form inputs -->
             <label for="name">Session Name:</label>
             <input type="text" id="name" name="name" required> <!-- Input for session name -->
@@ -21,24 +21,30 @@
                 <option value="group">Group</option> <!-- Option for group session -->
             </select>
         </div>
+        <!-- Hidden inputs for user session status -->
+        <input type="hidden" id="userInSession" name="userInSession" th:value="${user.inSession}"/>
+        <div th:if="${user.currentSession != null}" >
+            <input type="hidden" id="userInSessionActive" name="userInSessionActive" th:value="${user.currentSession.active}"/>
+            <input type="hidden" id="currentSessionId" name="currentSessionId" th:value="${user.currentSession.id}"/>
+        </div>
         <button type="submit">Create Session</button> <!-- Submit button for form -->
     </form>
 </div>
 
 <!-- Thymeleaf template code for displaying sessions -->
-<div th:each="s : ${sessions}" class="centered-container sessions"> <!-- Loop through sessions -->
-    <div th:if="${s.active}"> <!-- Check if session is active -->
+<div th:each="s : ${sessions}"> <!-- Loop through sessions -->
+    <div th:if="${s.active}" class="centered-container sessions"> <!-- Check if session is active -->
         <!-- Form to join a session -->
-        <form th:if="${s.individual == false || s.admin == user}" th:action="@{/api/sessions/{sessionId}/join(sessionId=${s.id})}" method="post" class="centered-form">
+        <form th:if="${!s.individual || s.admin == user}" th:action="@{/api/sessions/{sessionId}/join(sessionId=${s.id})}" method="post" class="centered-form">
             <div th:if="${!user.inSession}"> <!-- Check if user is not in any session -->
                 <!-- Button to join session -->
-                <button th:unless="${s.userList.contains(user)}" type="submit" th:text="'Join Session ' + ${s.name}">Join Session</button>
+                <button th:if="${!s.userList.contains(user)}" type="submit" th:text="'Join Session ' + ${s.name}">Join Session</button>
             </div>
-            <div th:unless="${!user.inSession}"> <!-- Check if user is in a session -->
+            <div th:if="${user.inSession}"> <!-- Check if user is in a session -->
                 <!-- Button to rejoin session -->
-                <button th:if="${s.userList.contains(user)}" type="submit" th:text="'Rejoin Session ' + ${s.name}">Join Session</button>
+                <button th:if="${s.userList.contains(user)}" type="submit" th:text="'Rejoin Session ' + ${s.name}">Rejoin Session</button>
                 <!-- Disabled button if user cannot join -->
-                <button th:unless="${s.userList.contains(user)}" type="submit" th:text="'Join Session ' + ${s.name}" disabled>Join Session</button>
+                <button th:if="${!s.userList.contains(user)}" type="button" th:text="'Join Session ' + ${s.name}" disabled>Join Session</button>
             </div>
         </form>
     </div>
