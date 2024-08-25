@@ -37,13 +37,11 @@ public class SessionUserManager {
      */
     public void handleUserLeavingSession(UUID userId, long sessionId) {
         User user = userService.findById(userId);
-
+        // User is a participant, handle participant session leave logic
+        handleParticipantSessionLeave(user, sessionId);
         if (user.getManagedSession() != null) {
             // User is an admin, handle admin session leave logic
             handleManagedSessionLeave(user);
-        } else {
-            // User is a participant, handle participant session leave logic
-            handleParticipantSessionLeave(user, sessionId);
         }
 
         // Reset user's session state regardless of their role
@@ -63,6 +61,7 @@ public class SessionUserManager {
             // For individual sessions, end the session and remove the user
             sessionService.endSession(session.getId());
             session.getUserList().remove(user);
+            user.setCurrentSession(null);
         } else {
             // For non-individual sessions, reassign admin or end session if no users left
             if (!session.getUserList().isEmpty()) {
