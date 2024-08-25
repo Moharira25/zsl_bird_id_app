@@ -113,31 +113,87 @@ h1 {
 
 .img-container {
     width: 100%;
-    height: 33%; /* Takes one-third of the card's height */
+    height: 50%; /* Adjusted to take half of the card's height for uniformity */
     overflow: hidden; /* Ensures content does not overflow */
-    position: relative; /* Keeps the bird-name div at the bottom */
+    position: relative; /* Keeps the bird-info div at the bottom */
 }
 
 .video-card img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Maintains aspect ratio and covers the area */
+    object-fit: cover; /* Ensures images cover the area while maintaining aspect ratio */
     display: block; /* Removes any extra space below the media */
 }
 
+/* Container for bird info and icon */
+.bird-info {
+    display: flex;
+    align-items: center; /* Aligns items vertically */
+    justify-content: center; /* Centers items horizontally */
+    gap: 5px; /* Space between the icon and the name */
+    position: absolute; /* Positioned absolutely within the video-card */
+    bottom: 10px; /* Distance from the bottom */
+    left: 10px; /* Distance from the left */
+    right: 10px; /* Distance from the right */
+    padding: 5px; /* Padding around the content */
+    z-index: 10; /* Ensures it's above other elements */
+    text-decoration: none;
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+}
+
+/* Style for the info icon */
+.info-icon {
+    font-size: 16px; /* Adjust size of the icon */
+    color: white; /* Black color for the icon */
+    position: relative; /* Needed for positioning the tooltip */
+}
+
+/* Tooltip styles */
+.info-icon::after {
+    content: attr(aria-label); /* Tooltip content from aria-label */
+    position: absolute;
+    left: 50%;
+    bottom: 125%; /* Position above the icon */
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-size: 14px; /* Tooltip font size */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Show tooltip on hover */
+.info-icon:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+.info-icon:hover{
+    color: green;
+}
+
+.bird-info:hover{
+    color: green;
+}
+
+/* Style for the bird name */
 .bird-name {
-    background-color: #f0f0f0; /* Light gray background */
     padding: 5px; /* Padding around the text */
     text-align: center; /* Centers the text */
     font-weight: bold; /* Bold font */
-    width: 100%; /* Takes the full width of the container */
-    box-sizing: border-box; /* Includes padding and border in width calculation */
-    position: absolute; /* Positions it at the bottom of its container */
-    bottom: 0; /* Sticks it to the bottom of its parent container */
-    left: 0;
-    height: 17%; /* Takes a fixed proportion of the card's height */
+    background-color: transparent; /* No background color */
+    color: white;
 }
 
+.bird-name:hover{
+    color: green;
+}
+
+/* Adjustments to ensure proper space around elements */
 .video-card p {
     margin: 0;
     padding: 10px; /* Padding around text */
@@ -203,7 +259,6 @@ h1 {
     background-color: rgba(255, 255, 255, 0.1); /* Slightly different background color for each stat */
     border-radius: 3px; /* Rounded corners */
 }
-
 
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {

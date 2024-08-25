@@ -87,17 +87,24 @@
             <div class="video-options">
                 <div th:each="option, optionStat : ${question.options}"
                      class="video-card"
-                     th:attr="data-option-id=${option.id}"
-                     th:onclick="|selectVideo(${option.id}, ${question.mainBird.id}, ${questionStat.index}, ${question.id}, ${optionStat.index})|">
-                    <div class="spectrogram">
-                        <!-- Video element for bird spectrogram or video -->
-                        <video width="100%" height="100">
-                            <source th:src="@{/files/{filename}(filename=${question.getBirdVideoUrls().get(option)})}" type="video/mp4"> <!-- Source for video file -->
-                            Your browser does not support the video tag.
-                        </video>
+                     th:attr="data-option-id=${option.id}">
+                    <div th:onclick="|selectVideo(${option.id}, ${question.mainBird.id}, ${questionStat.index}, ${question.id}, ${optionStat.index})|">
+                        <div class="spectrogram">
+                            <!-- Video element for bird spectrogram or video -->
+                            <video width="100%" height="100">
+                                <source th:src="@{/files/{filename}(filename=${question.getBirdVideoUrls().get(option)})}" type="video/mp4"> <!-- Source for video file -->
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <img th:src="@{/files/{filename}(filename=${option.imageUrl})}" alt="Bird image"> <!-- Image of bird -->
                     </div>
-                    <img th:src="@{/files/{filename}(filename=${option.imageUrl})}" alt="Bird image"> <!-- Image of bird -->
-                    <div class="bird-name" th:text="'Bird: ' + ${option.birdName}"></div> <!-- Bird name display -->
+                    <!-- Container for bird name and info icon -->
+                    <a th:href="${option.wikipediaUrl}" target="_blank" class="bird-info">
+                        <!-- Information icon with tooltip -->
+                        <span class="info-icon" aria-label="Learn more.">&#9432;</span>
+                        <!-- Bird name link -->
+                        <span class="bird-name" th:text="${option.birdName}"></span>
+                    </a>
                 </div>
             </div>
             <div class="feedback"></div> <!-- Placeholder for feedback after an answer -->
