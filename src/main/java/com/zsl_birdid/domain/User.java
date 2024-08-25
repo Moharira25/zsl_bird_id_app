@@ -33,6 +33,6 @@ public class User {
 
     private boolean inSession;  // Indicates whether the user is currently in a session
 
-    @OneToOne
+    @ManyToOne
     private Session CurrentSession;  // The session that the user is currently participating in
 }
