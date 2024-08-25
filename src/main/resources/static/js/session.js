@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!sessionId) {
         console.error('Session ID is not available.');
-        return; // Exit if session ID is not available
+        window.location.href = '/error_';
+        return;
     }
 
     // Initialize WebSocket connection
@@ -29,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (message === "reload") {
-            // Reload the page when a "reload" message is received
             window.location.reload();
         }
     };
@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     socket.onerror = function(error) {
         console.error("WebSocket error: ", error);
+        window.location.href = '/error_';
     };
 
     // Handle next question button click
@@ -52,9 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
         nextQuestionButton.addEventListener('click', function() {
             const sessionId = document.querySelector('input[name="sessionId"]').value;
             const currentIndex = document.getElementById('currentIndex') ? document.getElementById('currentIndex').value : '';
-
-            console.log('Index: ', currentIndex);
-            console.log('Session: ', sessionId);
 
             fetch(`${baseUrl}/api/questions/change`, {
                 method: 'POST',
@@ -68,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
+                        throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
@@ -78,10 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    window.location.href = '/error_';
                 });
         });
-    } else {
-        console.log('Next Question Button not found');
     }
 
     // Handle end session button click
@@ -104,14 +101,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     if (data.success) {
-                        // Hide the end session button
                         endSessionButton.style.display = 'none';
-
                         const currentQuestion = document.querySelector('.question-container.question');
                         if (currentQuestion) {
                             currentQuestion.classList.add('hidden');
                         }
-
                         if (!data.isIndividual){
                             const statsContainer = document.getElementById('sessionStats');
                             if (statsContainer) {
@@ -124,16 +118,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
                     } else {
-                        alert('Failed to end session or no scores available.');
+                        window.location.href = '/error_';
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert(`An error occurred while ending the session: ${error.message}`);
+                    window.location.href = '/error_';
                 });
         });
-    } else {
-        console.log('End Session Button not found');
     }
 
     // Handle leave session button click
@@ -157,23 +149,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     if (data.success) {
-                        alert('You have left the session.');
-                        window.location.href = "/explore"; // Redirect to home or appropriate page
+                        window.location.href = "/explore";
                     } else {
-                        alert('Failed to leave the session.');
+                        window.location.href = '/error_';
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert(`An error occurred while leaving the session: ${error.message}`);
+                    window.location.href = '/error_';
                 });
         });
-    } else {
-        console.log('Leave Session Button not found');
     }
 });
 
-// Define `selectVideo` function in the global scope
 function selectVideo(optionId, mainBirdId, questionIndex, questionId) {
     const questionContainer = document.querySelector(`.question-container[data-question-index="${questionIndex}"]`);
     if (questionContainer) {
@@ -199,7 +187,6 @@ function selectVideo(optionId, mainBirdId, questionIndex, questionId) {
     }
 }
 
-// Define `sendAnswerToServer` function in the global scope
 function sendAnswerToServer(optionId, mainBirdId, questionIndex, questionId) {
     const url = new URL(`${baseUrl}/api/questions/answer`);
     url.searchParams.append('birdId', mainBirdId);
@@ -211,15 +198,19 @@ function sendAnswerToServer(optionId, mainBirdId, questionIndex, questionId) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        credentials: 'include'  // This ensures cookies are sent with the request
+        credentials: 'include'
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             const questionContainer = document.querySelector(`.question-container[data-question-index="${questionIndex}"]`);
             if (questionContainer) {
                 const feedback = questionContainer.querySelector('.feedback');
                 const videoCard = questionContainer.querySelector(`.video-card[data-option-id="${optionId}"]`);
-
 
                 if (feedback) {
                     if (data.message === 'Correct') {
@@ -232,22 +223,18 @@ function sendAnswerToServer(optionId, mainBirdId, questionIndex, questionId) {
                     } else if (data.message === 'Question already answered.') {
                         feedback.textContent = "You've already answered this question.";
                     } else {
-                        feedback.textContent = data.message || "An error occurred.";
+                        feedback.textContent = "An error occurred.";
                     }
-                } else {
-                    console.error('Feedback element not found for question index:', questionIndex);
                 }
 
                 if (data.score !== undefined) {
                     console.log('Updated Score:', data.score);
-                    // Update the score display on the page here
                 }
-            } else {
-                console.error('Question container not found for questionIndex:', questionIndex);
             }
         })
         .catch(error => {
             console.error('Error sending answer:', error);
+            window.location.href = '/error_';
         });
 }
 
