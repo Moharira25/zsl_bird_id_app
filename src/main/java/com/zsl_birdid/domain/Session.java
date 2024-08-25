@@ -1,5 +1,6 @@
 package com.zsl_birdid.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties(value = { "userList", "questionList", "minScore", "maxScore", "averageScore", "medianScore", "admin" })
 public class Session {
 
     @Id

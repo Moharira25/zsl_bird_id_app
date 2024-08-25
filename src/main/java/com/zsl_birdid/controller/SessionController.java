@@ -57,7 +57,8 @@ public class SessionController {
         UUID userId = userService.getUserIdFromRequest(request);
 
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID not found in request");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "User ID not found in request"));
         }
 
         Optional<User> userOptional = userRepository.findById(userId);
@@ -65,9 +66,11 @@ public class SessionController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             Session createdSession = sessionService.createSession(session, user.getId());
+
             return ResponseEntity.status(HttpStatus.CREATED).body(createdSession);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("error", "User not found"));
         }
     }
 
