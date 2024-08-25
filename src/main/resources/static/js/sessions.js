@@ -1,7 +1,7 @@
 // Declare baseUrl globally
 let baseUrl;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Set baseUrl from the current URL
     baseUrl = `${window.location.protocol}//${window.location.host}`;
 
@@ -75,11 +75,15 @@ document.addEventListener('DOMContentLoaded', function() {
         })
             .then(response => {
                 if (response.ok) {
-                    console.log("Session created successfully");
-                    window.location.href = "/explore"; // Redirect to the sessions page or another page
+                    return response.json(); // Assuming the response includes session data
                 } else {
                     throw new Error('Failed to create session');
                 }
+            })
+            .then(sessionData => {
+                console.log("Session created successfully", sessionData);
+                // Automatically join the newly created session
+                joinSession(sessionData.id); // Call the joinSession function with the session ID
             })
             .catch(error => {
                 console.error("Error creating session:", error.message);
@@ -87,8 +91,28 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    // Function to join the session
+    function joinSession(sessionId) {
+        fetch(`${baseUrl}/api/sessions/${sessionId}/join`, {
+            method: 'POST',
+            credentials: 'include', // Ensures cookies are sent
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Follow the redirect provided by the server
+                    window.location.href = `/session/${sessionId}`;
+                } else {
+                    throw new Error('Failed to join session');
+                }
+            })
+            .catch(error => {
+                console.error("Error joining session:", error.message);
+                window.location.href = '/error_'; // Redirect to error page
+            });
+    }
+
     // Attach the createSession function to the form's submit event
-    const form = document.querySelector('form');
+    const form = document.getElementById('createSessionForm');
     if (form) {
         form.addEventListener('submit', createSession);
     }
