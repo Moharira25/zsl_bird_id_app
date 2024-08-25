@@ -52,12 +52,22 @@ button {
     font-size: 1em; /* Standard font size for buttons */
     cursor: pointer;
     border-radius: 4px; /* Rounded corners */
-    width: 100%; /* Full width of the parent container */
-    box-sizing: border-box; /* Includes padding and border in width calculation */
+    box-sizing: border-box; /* Includes padding and border in width and height calculation */
 }
 
 button:hover {
     background-color: #006400; /* Darker green background on hover */
+}
+
+button.rejoin-session-btn {
+    background-color: #008000; /* Green background for Rejoin Session button */
+    width: 70%; /* Takes 70% of the width of the container */
+}
+
+button.leave-session-btn {
+    background-color: #ff0000; /* Red background for Leave Session button */
+    width: 30%; /* Takes 30% of the width of the container */
+    margin-left: 0.25rem; /* Margin to the left of the Leave Session button */
 }
 
 div {
@@ -81,12 +91,14 @@ form {
 
 .centered-form {
     display: flex;
-    width: 75%; /* Sets width to 75% of the parent container */
     flex-direction: column; /* Stack elements vertically */
     justify-content: center; /* Center elements vertically */
     margin: auto; /* Center the form horizontally */
 }
 
-.video-card {
-    margin-bottom: 20px; /* Space below video cards */
+.session-actions {
+    display: flex;
+    justify-content: center; /* Center buttons horizontally */
+    gap: 0.25rem; /* Space between buttons */
+    align-items: center; /* Vertically center buttons */
 }

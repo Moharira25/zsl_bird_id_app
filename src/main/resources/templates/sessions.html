@@ -53,11 +53,22 @@
                     <!-- Button to join session -->
                     <button th:if="${!s.userList.contains(user)}" type="submit" th:text="'Join Session ' + ${s.name}">Join Session</button>
                 </div>
-                <div th:if="${user.inSession}"> <!-- Check if user is in a session -->
-                    <!-- Button to rejoin session -->
-                    <button th:if="${s.userList.contains(user)}" type="submit" th:text="'Rejoin Session ' + ${s.name}">Rejoin Session</button>
-                    <!-- Disabled button if user cannot join -->
-                    <button th:if="${!s.userList.contains(user)}" type="button" th:text="'Join Session ' + ${s.name}" disabled>Join Session</button>
+                <div th:if="${user.inSession}">
+                    <!-- Container for session action buttons -->
+                    <div class="session-actions">
+                        <!-- Button to rejoin the session, visible if the user is in the session's user list -->
+                        <button th:if="${s.userList.contains(user)}" type="submit" class="rejoin-session-btn" th:text="'Rejoin Session ' + ${s.name}">
+                            Rejoin Session
+                        </button>
+                        <!-- Button to leave the session, visible if the user is in the session's user list -->
+                        <button th:if="${s.userList.contains(user)}" type="button" class="leave-session-btn" th:data-session-id="${s.id}" th:text="'Leave Session '">
+                            Leave Session
+                        </button>
+                    </div>
+                    <!-- Disabled button to join the session, visible if the user is not in the session's user list -->
+                    <button th:if="${!s.userList.contains(user)}" type="button" th:text="'Join Session ' + ${s.name}" disabled>
+                        Join Session
+                    </button>
                 </div>
             </form>
         </div>

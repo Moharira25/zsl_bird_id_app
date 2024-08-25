@@ -116,4 +116,36 @@ document.addEventListener('DOMContentLoaded', function () {
     if (form) {
         form.addEventListener('submit', createSession);
     }
+
+    // Function to handle leaving a session
+    function leaveSession(event) {
+        const sessionId = event.target.getAttribute('data-session-id');
+        if (confirm("Are you sure you want to leave this session?")) {
+            fetch(`${baseUrl}/api/sessions/${sessionId}/leave`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Successfully left the session.");
+                        window.location.reload(); // Reload the page to reflect changes
+                    } else {
+                        throw new Error('Failed to leave session');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error leaving session:", error.message);
+                    window.location.href = '/error_'; // Redirect to error page
+                });
+        }
+    }
+
+    // Attach event listeners to all leave session buttons
+    const leaveSessionButtons = document.querySelectorAll('.leave-session-btn');
+    leaveSessionButtons.forEach(button => {
+        button.addEventListener('click', leaveSession);
+    });
 });
