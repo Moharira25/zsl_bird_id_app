@@ -62,7 +62,7 @@ public class MainController {
      */
     @GetMapping("/error_")
     public String handleError() {
-        return "errorPage";
+        return "error";
     }
 
     /**
@@ -96,7 +96,7 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", "An error occurred while processing your request.");
-            return "errorPage";
+            return "error";
         }
     }
 
@@ -160,7 +160,7 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", "An error occurred while processing your request.");
-            return "errorPage";
+            return "error";
         }
     }
 }
