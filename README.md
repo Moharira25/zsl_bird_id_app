@@ -117,7 +117,8 @@ For processing bird data, you can use the [vidwav](https://github.com/Moharira25
 You can obtain bird audio data from various sources, including [xeno-canto](https://www.xeno-canto.org), which provides a vast collection of bird sounds from around the world. This can be a valuable resource for your bird song analysis.
 
 You can customize the frame rate and colormap used in the spectrogram. This tool can be an excellent addition for visualizing and analyzing bird song data, complementing the bird identification functionality of this application.
-
+### Note
+If you do not wish to perform the processing with vidwav, you can simply use the Birds directory in this repository. This directory contains data for the top 10 common birds in England.
 ## Bird Data Directory
 
 The application initializes bird data from a specified directory on the server. You need to set the path to this directory in the `BirdInitializer` component. Update the `baseDirectory` variable in `BirdInitializer` with the path where bird files are stored.
