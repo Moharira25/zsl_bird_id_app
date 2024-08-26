@@ -2,16 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures responsive design -->
-    <title>Bird Song Quiz</title> <!-- Page title -->
-    <link rel="stylesheet" href="/css/session.css"> <!-- Link to external CSS file for styling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Song Quiz</title>
+    <link rel="stylesheet" href="/css/session.css">
 </head>
 <body>
 <noscript>
     <div class="no-js-warning">
         <p>JavaScript is required for this application to function properly. Please enable JavaScript in your browser settings.</p>
         <style>
-            /* Hide main content if JavaScript is disabled */
             .js-enabled-content {
                 display: none;
             }
@@ -19,101 +18,85 @@
     </div>
 </noscript>
 
-<div class="js-enabled-content"> <!-- Main container for content, shown only if JavaScript is enabled -->
-    <h1>Bird Song Quiz</h1> <!-- Main heading -->
+<div class="js-enabled-content">
+    <h1>Bird Song Quiz</h1>
 
-    <!-- Button group for session controls -->
     <div class="button-group">
-        <!-- Conditional content for session manager -->
         <div th:if="${user.managedSession == session_}">
-            <!-- Form for changing question; displayed unless it's the last question -->
             <form id="changeQuestionForm" th:unless="${session_.questionIndex + 1 >= session_.questionList.size()}">
-                <input type="hidden" name="sessionId" th:value="${sessionId}"> <!-- Hidden field for session ID -->
-                <input type="hidden" name="currentIndex" id="currentIndex" th:value="${session_.questionIndex}"> <!-- Hidden field for current question index -->
-                <button type="button" id="nextQuestionButton" class="btn">Next Question</button> <!-- Button to go to the next question -->
+                <input type="hidden" name="sessionId" th:value="${sessionId}">
+                <input type="hidden" name="currentIndex" id="currentIndex" th:value="${session_.questionIndex}">
+                <button type="button" id="nextQuestionButton" class="btn">Next Question</button>
             </form>
 
-            <!-- Form to end the session; displayed if it's the last question -->
             <form id="endSessionForm" th:if="${session_.questionIndex + 1 >= session_.questionList.size()}">
-                <input type="hidden" name="sessionId" th:value="${sessionId}"> <!-- Hidden field for session ID -->
-                <button type="button" id="endSessionButton" class="btn">End Session</button> <!-- Button to end the session -->
+                <input type="hidden" name="sessionId" th:value="${sessionId}">
+                <button type="button" id="endSessionButton" class="btn">End Session</button>
             </form>
         </div>
 
-        <!-- Form to leave the session -->
         <form id="leaveSessionForm">
-            <input type="hidden" name="sessionId" th:value="${sessionId}"> <!-- Hidden field for session ID -->
-            <button type="button" id="leaveSessionButton" class="btn">Leave Session</button> <!-- Button to leave the session -->
+            <input type="hidden" name="sessionId" th:value="${sessionId}">
+            <button type="button" id="leaveSessionButton" class="btn">Leave Session</button>
         </form>
     </div>
 
-    <!-- Session statistics, visible only to the session manager -->
     <div id="sessionStats" class="stats hidden">
-        <h2>Session Statistics</h2> <!-- Heading for statistics -->
+        <h2>Session Statistics</h2>
         <div class="stats-container">
             <div th:if="${session_.individual || !(user.managedSession == session_)}">
                 <p id="userScore" th:text="'Score: ' + ${user.sessionScore}"></p>
             </div>
             <div th:if="${user.managedSession == session_ && !session_.individual}" class="stats-row">
-                <p id="minScore"></p> <!-- Placeholder for minimum score -->
-                <p id="maxScore"></p> <!-- Placeholder for maximum score -->
-                <p id="averageScore"></p> <!-- Placeholder for average score -->
-                <p id="medianScore"></p> <!-- Placeholder for median score -->
-                <p id="numberOfParticipants"></p> <!-- Placeholder for number of Participants -->
+                <p id="minScore"></p>
+                <p id="maxScore"></p>
+                <p id="averageScore"></p>
+                <p id="medianScore"></p>
+                <p id="numberOfParticipants"></p>
                 <p th:unless="${session_.questionIndex + 1 >= session_.questionList.size()}" th:text="'Active Users: ' + ${session_.userList.size() - 1}"></p>
             </div>
         </div>
     </div>
 
-    <!-- Loop through questions for the session -->
     <div th:each="question, questionStat : ${session_.questionList}">
-        <!-- Container for a question; displayed only if it's the current question -->
-        <div class="question-container question"
-             th:attr="data-question-index=${questionStat.index}"
-             th:if="${questionStat.index == session_.questionIndex}">
+        <div class="question-container"
+             th:if="${questionStat.index == session_.questionIndex}"
+             th:attr="data-question-index=${questionStat.index}">
 
-            <p th:text="'Question ' + ${questionStat.index + 1}">Question</p> <!-- Display question number -->
+            <p th:text="'Question ' + ${questionStat.index + 1}">Question</p>
 
-            <!-- Button to play the bird song audio -->
             <button class="play-button" th:onclick="'playAudio(' + ${questionStat.index} + ')'">PLAY SONG #[[${questionStat.index + 1}]]</button>
 
-            <!-- Audio element for bird song -->
             <audio th:id="'audio-' + ${questionStat.index}" style="display: none;">
-                <source th:src="@{/files/{filename}(filename=${question.mainBird.mediaUrl})}" type="audio/mpeg"> <!-- Source for audio file -->
+                <source th:src="@{/files/{filename}(filename=${question.mainBird.mediaUrl})}" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
 
-            <!-- Options for selecting the correct video -->
             <div class="video-options">
                 <div th:each="option, optionStat : ${question.options}"
                      class="video-card"
-                     th:attr="data-option-id=${option.id}">
+                     th:attr="data-option-id=${option.id}, data-audio-id='audio-' + ${questionStat.index}">
                     <div th:onclick="|selectVideo(${option.id}, ${question.mainBird.id}, ${questionStat.index}, ${question.id}, ${optionStat.index})|">
                         <div class="spectrogram">
-                            <!-- Video element for bird spectrogram or video -->
                             <video width="100%" height="100">
-                                <source th:src="@{/files/{filename}(filename=${question.getBirdVideoUrls().get(option)})}" type="video/mp4"> <!-- Source for video file -->
+                                <source th:src="@{/files/{filename}(filename=${question.getBirdVideoUrls().get(option)})}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
-                        <img th:src="@{/files/{filename}(filename=${option.imageUrl})}" alt="Bird image"> <!-- Image of bird -->
+                        <img th:src="@{/files/{filename}(filename=${option.imageUrl})}" alt="Bird image">
                     </div>
-                    <!-- Container for bird name and info icon -->
                     <a th:href="${option.wikipediaUrl}" target="_blank" class="bird-info">
-                        <!-- Information icon with tooltip -->
                         <span class="info-icon" aria-label="Learn more.">&#9432;</span>
-                        <!-- Bird name link -->
                         <span class="bird-name" th:text="${option.birdName}"></span>
                     </a>
                 </div>
             </div>
-            <div class="feedback"></div> <!-- Placeholder for feedback after an answer -->
+            <div class="feedback"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // Reveal the content only if JavaScript is enabled
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.js-enabled-content').style.display = 'block';
     });
@@ -121,6 +104,6 @@
 <script th:inline="javascript">
     var sessionId = /*[[${sessionId}]]*/ '';
 </script>
-<script src="/js/session.js"></script> <!-- Link to external JavaScript file for functionality -->
+<script src="/js/session.js"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 // Declare baseUrl globally
 let baseUrl;
+let audioPlayed = {}; // To track if audio has been played
 
 document.addEventListener('DOMContentLoaded', function() {
     // Get baseUrl from the current URL
@@ -160,6 +161,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         });
     }
+
+    // Handle audio playback tracking
+    const allAudio = document.querySelectorAll('audio');
+    allAudio.forEach((audio) => {
+        audio.addEventListener('play', () => {
+            audioPlayed[audio.id] = true; // Track audio playback
+        });
+    });
 });
 
 function selectVideo(optionId, mainBirdId, questionIndex, questionId) {
@@ -169,6 +178,15 @@ function selectVideo(optionId, mainBirdId, questionIndex, questionId) {
         const video = videoCard ? videoCard.querySelector('video') : null;
 
         if (video) {
+            const associatedAudioId = videoCard.getAttribute('data-audio-id');
+            const associatedAudio = document.getElementById(associatedAudioId);
+
+            if (associatedAudio && !audioPlayed[associatedAudioId]) {
+                console.error('Audio must be played before this video.');
+                alert('Please play the associated audio before playing the video.');
+                return;
+            }
+
             // Pause all other videos first
             const allVideos = document.querySelectorAll('video');
             allVideos.forEach((vid) => {
@@ -195,7 +213,6 @@ function selectVideo(optionId, mainBirdId, questionIndex, questionId) {
         console.error('Question container not found for questionIndex:', questionIndex);
     }
 }
-
 
 function sendAnswerToServer(optionId, mainBirdId, questionIndex, questionId) {
     const url = new URL(`${baseUrl}/api/questions/answer`);
