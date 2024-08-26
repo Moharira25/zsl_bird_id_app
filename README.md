@@ -76,15 +76,15 @@ spring.datasource.username=your_database_username
 
 spring.datasource.password=your_database_password
 
-spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.hibernate.ddl-auto=create-drop // Use 'create-drop' to reset the database on shutdown; switch to 'create' to keep data.
 
 spring.jpa.show-sql=true
 
 logging.level.org.hibernate.SQL=debug
 
-SERVER_IP=192.168.0.34
+SERVER_IP=the_server's_ip
 
-SERVER_PORT=8080
+SERVER_PORT=the_port_the_app_is_running_on
 
 ```
 
@@ -132,6 +132,7 @@ The BirdInitializer component scans this directory for bird data files (audio, i
 * Audio File: WAV file of the bird's call or song.
 * Main Video File: MP4 video file containing the primary video of the bird.
 * Image File: Image file of the bird (JPEG, PNG, etc.).
+* A Text File: With a link to more info about the bird.
 * Options Directory (optional): A subdirectory containing additional video options for the bird. Each option should be an MP4 file.
 ### Suggested Directory Structure
 Here is an example of how your bird data directory should be structured:
@@ -143,6 +144,7 @@ C:\Birds
 │   ├── [Bird_Name].wav        # Audio file
 │   ├── [Bird_Name] - main.mp4 # Main video file
 │   ├── [Bird_Name].jpg        # Image file
+|   ├── [Bird_Name].txt        # text file 
 │   └── options
 │       ├── [Bird_Name] - option 1.mp4
 │       ├── [Bird_Name] - option 2.mp4
@@ -154,6 +156,7 @@ C:\Birds
 * [Bird_Name].wav: Audio file for the bird.
 * [Bird_Name] - main.mp4: Main video file for the bird.
 * [Bird_Name].jpg: Image file for the bird.
+* [Bird_Name].txt: Text file with a URL to the bird's Wikipedia page (can be any website really).
 * options: Subdirectory containing additional video options for the bird.
 ### Custom Directory Structure
 You can modify the directory structure as needed. However, if you alter the structure, you must update the BirdInitializer file to reflect these changes and ensure that the application correctly identifies and processes the files.
@@ -186,15 +189,15 @@ java -jar build/libs/zsl-bird-id-0.0.1-SNAPSHOT.jar
 
    * Open your web browser and navigate to http://localhost:8080 to view the application.
 
-   * Users can join sessions by scanning the QR code displayed at the root endpoint **/**. This QR code directs users to the index page, eliminating the need to manually type in the address http//:192.168.0.1:8080 (note the ip address and the por number in here are just examples).
+   * Users can join sessions by scanning the QR code displayed at the root endpoint **/**. This QR code directs users to the index page, eliminating the need to manually type in the address http//:192.168.0.1:8080 (note the ip address and the port number in here are just examples).
 
 ## Usage
 
- **Creating a Session**: go to the endpoint **/explore** or from the landing page and use the **Create a new session** form to set up a quiz session.
+ **Creating a Session**: go to the endpoint **/explore** and use the **create new session** form to set up a new session.
 
- **Participating in a Session**: Users can join active sessions clicking on the join session button in the endpoint **/explore**.
+ **Participating in a Session**: Users can join active group sessions by clicking the 'Join Session' button on the sessions page.
 
- **Viewing Results**: Admin users can view the results and statistics for each session once it is completed.
+ **Viewing Results**: Admin users can view the results and statistics for each session once it is completed, while normal users can see their score as they answer questions.
 
 ## Contributing
 
