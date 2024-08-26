@@ -169,6 +169,15 @@ function selectVideo(optionId, mainBirdId, questionIndex, questionId) {
         const video = videoCard ? videoCard.querySelector('video') : null;
 
         if (video) {
+            // Pause all other videos first
+            const allVideos = document.querySelectorAll('video');
+            allVideos.forEach((vid) => {
+                if (vid !== video) {
+                    vid.pause();
+                }
+            });
+
+            // Play the selected video
             video.play();
         } else {
             console.error('Video element not found for optionId:', optionId);
@@ -186,6 +195,7 @@ function selectVideo(optionId, mainBirdId, questionIndex, questionId) {
         console.error('Question container not found for questionIndex:', questionIndex);
     }
 }
+
 
 function sendAnswerToServer(optionId, mainBirdId, questionIndex, questionId) {
     const url = new URL(`${baseUrl}/api/questions/answer`);
