@@ -6,9 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get baseUrl from the current URL
     baseUrl = `${window.location.protocol}//${window.location.host}`;
 
-    // Get sessionId from an element or global variable
-    const sessionIdInput = document.querySelector('input[name="sessionId"]');
-    const sessionId = sessionIdInput ? sessionIdInput.value : window.sessionId;
+    // Get sessionId from a data attribute or global variable
+    const sessionId = document.querySelector('[data-session-id]')?.getAttribute('data-session-id') || window.sessionId;
 
     if (!sessionId) {
         console.error('Session ID is not available.');
@@ -52,8 +51,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextQuestionButton = document.getElementById('nextQuestionButton');
     if (nextQuestionButton) {
         nextQuestionButton.addEventListener('click', function() {
-            const sessionId = document.querySelector('input[name="sessionId"]').value;
-            const currentIndex = document.getElementById('currentIndex') ? document.getElementById('currentIndex').value : '';
+            const sessionId = this.getAttribute('data-session-id');
+            const currentIndex = this.getAttribute('data-current-index');
 
             fetch(`${baseUrl}/api/questions/change`, {
                 method: 'POST',
@@ -86,46 +85,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const endSessionButton = document.getElementById('endSessionButton');
     if (endSessionButton) {
         endSessionButton.addEventListener('click', function() {
-            const sessionId = document.querySelector('input[name="sessionId"]').value || window.sessionId;
+            if (confirm('Are you sure you want to end the session?')) {
+                const sessionId = this.getAttribute('data-session-id');
 
-            fetch(`${baseUrl}/api/sessions/${sessionId}/end`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                fetch(`${baseUrl}/api/sessions/${sessionId}/end`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
-                    return response.json();
                 })
-                .then(data => {
-                    if (data.success) {
-                        endSessionButton.style.display = 'none';
-                        const currentQuestion = document.querySelector('.question-container.question');
-                        if (currentQuestion) {
-                            currentQuestion.classList.add('hidden');
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
                         }
-                        if (!data.isIndividual){
-                            const statsContainer = document.getElementById('sessionStats');
-                            if (statsContainer) {
-                                statsContainer.classList.remove('hidden');
-                                document.getElementById('minScore').innerText = `Minimum Score: ${data.minScore}`;
-                                document.getElementById('maxScore').innerText = `Maximum Score: ${data.maxScore}`;
-                                document.getElementById('averageScore').innerText = `Average Score: ${data.averageScore}`;
-                                document.getElementById('medianScore').innerText = `Median Score: ${data.medianScore}`;
-                                document.getElementById('numberOfParticipants').innerText = `Number of Participants: ${data.numberOfParticipants}`;
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            endSessionButton.style.display = 'none';
+                            const currentQuestion = document.querySelector('.question-container.question');
+                            if (currentQuestion) {
+                                currentQuestion.classList.add('hidden');
                             }
+                            if (!data.isIndividual){
+                                const statsContainer = document.getElementById('sessionStats');
+                                if (statsContainer) {
+                                    statsContainer.classList.remove('hidden');
+                                    document.getElementById('minScore').innerText = `Minimum Score: ${data.minScore}`;
+                                    document.getElementById('maxScore').innerText = `Maximum Score: ${data.maxScore}`;
+                                    document.getElementById('averageScore').innerText = `Average Score: ${data.averageScore}`;
+                                    document.getElementById('medianScore').innerText = `Median Score: ${data.medianScore}`;
+                                    document.getElementById('numberOfParticipants').innerText = `Number of Participants: ${data.numberOfParticipants}`;
+                                }
+                            }
+                        } else {
+                            window.location.href = '/error_';
                         }
-                    } else {
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
                         window.location.href = '/error_';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    window.location.href = '/error_';
-                });
+                    });
+            }
         });
     }
 
@@ -133,32 +134,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const leaveSessionButton = document.getElementById('leaveSessionButton');
     if (leaveSessionButton) {
         leaveSessionButton.addEventListener('click', function() {
-            const sessionId = document.querySelector('input[name="sessionId"]').value || window.sessionId;
+            if (confirm('Are you sure you want to leave the session?')) {
+                const sessionId = this.getAttribute('data-session-id');
 
-            fetch(`${baseUrl}/api/sessions/${sessionId}/leave`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ sessionId })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
+                fetch(`${baseUrl}/api/sessions/${sessionId}/leave`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sessionId })
                 })
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = "/explore";
-                    } else {
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = "/explore";
+                        } else {
+                            window.location.href = '/error_';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
                         window.location.href = '/error_';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    window.location.href = '/error_';
-                });
+                    });
+            }
         });
     }
 

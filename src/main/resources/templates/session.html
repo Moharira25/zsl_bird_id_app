@@ -18,28 +18,8 @@
     </div>
 </noscript>
 
-<div class="js-enabled-content">
+<div class="js-enabled-content container">
     <h1>Bird Song Quiz</h1>
-
-    <div class="button-group">
-        <div th:if="${user.managedSession == session_}">
-            <form id="changeQuestionForm" th:unless="${session_.questionIndex + 1 >= session_.questionList.size()}">
-                <input type="hidden" name="sessionId" th:value="${sessionId}">
-                <input type="hidden" name="currentIndex" id="currentIndex" th:value="${session_.questionIndex}">
-                <button type="button" id="nextQuestionButton" class="btn">Next Question</button>
-            </form>
-
-            <form id="endSessionForm" th:if="${session_.questionIndex + 1 >= session_.questionList.size()}">
-                <input type="hidden" name="sessionId" th:value="${sessionId}">
-                <button type="button" id="endSessionButton" class="btn">End Session</button>
-            </form>
-        </div>
-
-        <form id="leaveSessionForm">
-            <input type="hidden" name="sessionId" th:value="${sessionId}">
-            <button type="button" id="leaveSessionButton" class="btn">Leave Session</button>
-        </form>
-    </div>
 
     <div id="sessionStats" class="stats hidden">
         <h2>Session Statistics</h2>
@@ -83,9 +63,9 @@
                                 Your browser does not support the video tag.
                             </video>
                         </div>
-                        <!--image container -->
                         <div class="image-container">
                             <img class="bird-image" th:src="@{/files/{filename}(filename=${option.imageUrl})}" alt="Bird image">
+                            <span class="answer-indicator"></span>
                         </div>
                     </div>
                     <a th:href="${option.wikipediaUrl}" target="_blank" class="bird-info">
@@ -96,6 +76,19 @@
             </div>
 
             <div class="feedback"></div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button type="button" id="leaveSessionButton" class="btn" th:data-session-id="${sessionId}">Leave Session</button>
+        <div th:if="${user.managedSession == session_}">
+            <button type="button" id="nextQuestionButton" class="btn"
+                    th:unless="${session_.questionIndex + 1 >= session_.questionList.size()}"
+                    th:data-session-id="${sessionId}"
+                    th:data-current-index="${session_.questionIndex}">Next Question</button>
+            <button type="button" id="endSessionButton" class="btn"
+                    th:if="${session_.questionIndex + 1 >= session_.questionList.size() && !session_.individual}"
+                    th:data-session-id="${sessionId}">End Session</button>
         </div>
     </div>
 </div>
