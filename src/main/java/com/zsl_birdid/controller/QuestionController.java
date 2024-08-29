@@ -134,17 +134,28 @@ public class QuestionController {
         if (user != null && mainBird != null && optionBird != null) {
             boolean correct = Objects.equals(mainBird.getBirdName(), optionBird.getBirdName());
 
-            // Mark the question as answered regardless of correctness
-            user.getAnsweredQuestions().add(questionId);
+            // Determine if the user has already answered the question
+            boolean hasAnswered = hasUserAlreadyAnswered(user, questionId);
 
-            if (correct) {
-                if (!hasUserAlreadyAnswered(user, questionId)) {
-                    //update the score if the user hasn't answered the question before
+            // If the user has not answered the question before
+            if (!hasAnswered) {
+                // If the answer is correct, update the score
+                if (correct) {
                     user.setSessionScore(user.getSessionScore() + 1);
+                    response.put("message", "Correct");
+                } else {
+                    response.put("message", "Incorrect");
                 }
-                response.put("message", "Correct");
+
+                // Mark the question as answered regardless of correctness
+                user.getAnsweredQuestions().add(questionId);
             } else {
-                response.put("message", "Incorrect");
+                // If the user has answered before, just indicate correctness of the new answer
+                if (correct) {
+                    response.put("message", "Correct");
+                } else {
+                    response.put("message", "Incorrect");
+                }
             }
 
             userRepository.save(user); // Save updated user
