@@ -19,9 +19,8 @@
 </noscript>
 
 <div class="js-enabled-content container">
-    <h1>Bird Song Quiz</h1>
-
     <div id="sessionStats" class="stats hidden">
+        <h1>Bird Song Quiz</h1>
         <h2>Session Statistics</h2>
         <div class="stats-container">
             <div th:if="${session_.individual || !(user.managedSession == session_)}">
