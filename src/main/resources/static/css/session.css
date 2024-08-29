@@ -100,6 +100,11 @@ h1 {
     transform: scale(1.05); /* Scales up the card on hover */
 }
 
+.video-card:hover video {
+    transform: scale(1.1); /* Scales up the video slightly on hover */
+    transition: transform 0.3s ease-in-out; /* Smooth scaling effect */
+}
+
 .video-card .video-container {
     width: 100%;
     height: 50%; /* Takes half of the card's height */
@@ -206,12 +211,6 @@ h1 {
 .video-card.incorrect {
     border-color: red; /* Red border for incorrect answers */
     background-color: #f8e0e0; /* Light red background */
-}
-
-.feedback {
-    margin: 20px; /* Adds margin around feedback text */
-    font-size: 1.2em; /* Larger font size for emphasis */
-    font-weight: bold; /* Bold font */
 }
 
 #messageContainer {

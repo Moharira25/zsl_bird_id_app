@@ -239,24 +239,26 @@ function sendAnswerToServer(optionId, mainBirdId, questionIndex, questionId) {
         .then(data => {
             const questionContainer = document.querySelector(`.question-container[data-question-index="${questionIndex}"]`);
             if (questionContainer) {
-                const feedback = questionContainer.querySelector('.feedback');
                 const videoCard = questionContainer.querySelector(`.video-card[data-option-id="${optionId}"]`);
 
-                if (feedback) {
-                    if (data.message === 'Correct') {
-                        feedback.textContent = "Correct answer!";
-                        document.getElementById('userScore').innerText = `Score : ${data.score}`;
-                        if (videoCard) videoCard.classList.add('correct');
-                    } else if (data.message === 'Incorrect') {
-                        feedback.textContent = "Incorrect answer.";
-                        if (videoCard) videoCard.classList.add('incorrect');
-                    } else if (data.message === 'Question already answered.') {
-                        feedback.textContent = "You've already answered this question.";
-                    } else {
-                        feedback.textContent = "An error occurred.";
+                // Handling the 'Correct' and 'Incorrect' messages based on server response
+                if (data.message === 'Correct') {
+                    document.getElementById('userScore').innerText = `Score: ${data.score}`;
+                    if (videoCard) {
+                        videoCard.classList.add('correct');
                     }
+                    console.log('Correct answer recorded.');
+                } else if (data.message === 'Incorrect') {
+                    if (videoCard) {
+                        videoCard.classList.add('incorrect');
+                    }
+                    console.log('Incorrect answer recorded.');
+                } else {
+                    // Handle any other unexpected messages
+                    console.error('Unexpected response message');
                 }
 
+                // Log updated score if available
                 if (data.score !== undefined) {
                     console.log('Updated Score:', data.score);
                 }
@@ -267,6 +269,7 @@ function sendAnswerToServer(optionId, mainBirdId, questionIndex, questionId) {
             window.location.href = '/error_';
         });
 }
+
 
 function playAudio(index) {
     const audio = document.getElementById('audio-' + index);

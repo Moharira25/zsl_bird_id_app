@@ -132,19 +132,16 @@ public class QuestionController {
 
         User user = userRepository.findById(userId).orElse(null);
         if (user != null && mainBird != null && optionBird != null) {
-            if (hasUserAlreadyAnswered(user, questionId)) {
-                response.put("message", "Question already answered.");
-                response.put("score", user.getSessionScore());
-                return new ResponseEntity<>(response, status);
-            }
-
             boolean correct = Objects.equals(mainBird.getBirdName(), optionBird.getBirdName());
 
             // Mark the question as answered regardless of correctness
             user.getAnsweredQuestions().add(questionId);
 
             if (correct) {
-                user.setSessionScore(user.getSessionScore() + 1);
+                if (!hasUserAlreadyAnswered(user, questionId)) {
+                    //update the score if the user hasn't answered the question before
+                    user.setSessionScore(user.getSessionScore() + 1);
+                }
                 response.put("message", "Correct");
             } else {
                 response.put("message", "Incorrect");
