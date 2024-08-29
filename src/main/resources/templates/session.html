@@ -43,9 +43,7 @@
              th:if="${questionStat.index == session_.questionIndex}"
              th:attr="data-question-index=${questionStat.index}">
 
-            <p th:text="'Question ' + ${questionStat.index + 1}">Question</p>
-
-            <button class="play-button" th:onclick="'playAudio(' + ${questionStat.index} + ')'">PLAY SONG #[[${questionStat.index + 1}]]</button>
+            <button class="play-button" th:onclick="'playAudio(' + ${questionStat.index} + ')'">PLAY SOUND #[[${questionStat.index + 1}]]</button>
 
             <audio th:id="'audio-' + ${questionStat.index}" style="display: none;">
                 <source th:src="@{/files/{filename}(filename=${question.mainBird.mediaUrl})}" type="audio/mpeg">

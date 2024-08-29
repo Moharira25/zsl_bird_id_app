@@ -227,6 +227,7 @@ h1 {
 .question-container {
     margin-bottom: 20px; /* Space below the question container */
     text-align: center; /* Centers the text */
+    padding: 15px;
 }
 
 .stats-container {
