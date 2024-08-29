@@ -21,10 +21,10 @@
 <div class="js-enabled-content container">
     <div id="sessionStats" class="stats hidden">
         <h1>Bird Song Quiz</h1>
-        <h2>Session Statistics</h2>
+        <p style="text-align: center;">Press 'play sound', then choose the bird you think made that sound!</p>
         <div class="stats-container">
             <div th:if="${session_.individual || !(user.managedSession == session_)}">
-                <p id="userScore" th:text="'Score: ' + ${user.sessionScore}"></p>
+                <p style="text-align: center;" id="userScore" th:text="'Score: ' + ${user.sessionScore} + '/' + ${session_.questionList.size()}"></p>
             </div>
             <div th:if="${user.managedSession == session_ && !session_.individual}" class="stats-row">
                 <p id="minScore"></p>
