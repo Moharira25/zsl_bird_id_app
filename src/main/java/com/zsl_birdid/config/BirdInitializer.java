@@ -182,6 +182,7 @@ public class BirdInitializer implements ApplicationRunner {
 
                         // Add the option bird to the parent bird's options
                         bird.getOptions().add(optionBird);
+                        birdRepository.save(bird);
                     }
                 }
             }
