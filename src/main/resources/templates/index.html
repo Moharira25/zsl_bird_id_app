@@ -21,7 +21,7 @@
             fetch('/api/server-info')
                 .then(response => response.json())
                 .then(data => {
-                    const url = `http://${data.ip}:${data.port}/`;
+                    const url = `https://${data.ip}:${data.port}/`;
                     QRCode.toCanvas(document.getElementById('qr-code'), url, function (error) {
                         if (error) {
                             console.error('Error generating QR code:', error);
