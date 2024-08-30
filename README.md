@@ -182,7 +182,7 @@ You can modify the directory structure as needed. However, if you alter the stru
 
 ```bash
 
-java -jar build/libs/zsl-bird-id-0.0.1-SNAPSHOT.jar
+java -jar build/libs/zsl_birdID-0.0.1-SNAPSHOT.jar
 
 ```
 
