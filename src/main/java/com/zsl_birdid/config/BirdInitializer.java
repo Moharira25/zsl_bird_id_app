@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,6 +34,7 @@ public class BirdInitializer implements ApplicationRunner {
      * It scans the base directory for bird data and updates the database.
      */
     @Override
+    @Transactional
     public void run(ApplicationArguments args) {
         Path baseDirPath = Paths.get(baseDirectory);
         File[] birdDirs = baseDirPath.toFile().listFiles(File::isDirectory);
@@ -163,19 +165,17 @@ public class BirdInitializer implements ApplicationRunner {
             File[] optionFiles = optionsDir.listFiles();
             if (optionFiles != null) {
                 for (File optionFile : optionFiles) {
-
-                    // Check if this option already exists in the bird's options
                     boolean optionExists = bird.getOptions().stream()
                             .anyMatch(opt -> opt.getMediaUrl().equals(relativePath(optionFile.toPath())));
 
                     if (!optionExists) {
-                        // Create a new Bird entity for this option
                         Bird optionBird = new Bird();
-                        optionBird.setBirdName(bird.getBirdName());  // Same name as parent
+                        optionBird.setBirdName(bird.getBirdName());
                         optionBird.setMediaUrl(relativePath(optionFile.toPath()));
-                        optionBird.setImageUrl(bird.getImageUrl());  // Use the same image as parent
-                        optionBird.setWikipediaUrl(bird.getWikipediaUrl()); //Use the same wiki url as parent
+                        optionBird.setImageUrl(bird.getImageUrl());
+                        optionBird.setWikipediaUrl(bird.getWikipediaUrl());
                         optionBird.setMain(false);
+                        optionBird.setParentBird(bird);
 
                         // Save the option bird
                         birdRepository.save(optionBird);
@@ -187,6 +187,7 @@ public class BirdInitializer implements ApplicationRunner {
             }
         }
     }
+
 
     /**
      * Finds a file with a specific extension in an array of files.

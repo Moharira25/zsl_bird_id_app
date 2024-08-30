@@ -31,9 +31,13 @@ public class Bird {
     private String imageUrl;  // URL or path to the image file representing the bird
 
     private boolean isMain;   // Flag indicating whether this bird is the main bird or one of its options
-    private String wikipediaUrl; // A 'Wikipedia' Url that contains info about the bird.
 
-    @OneToMany
+    private String wikipediaUrl; // A 'Wikipedia' URL that contains info about the bird.
+
+    @OneToMany(mappedBy = "parentBird", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Bird> options = new ArrayList<>(); // List of option birds related to the main bird
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_bird_id")
+    private Bird parentBird; // The parent bird for option birds
 }
