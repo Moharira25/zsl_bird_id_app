@@ -36,7 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-# Exclude sensitive files
 src/main/resources/application.properties
-src/main/resources/keystorefile.jks
-
+src/main/resources/keystore.jks
