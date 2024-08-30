@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * This component initializes bird data when the application starts up.
@@ -42,19 +43,21 @@ public class BirdInitializer implements ApplicationRunner {
                 String birdName = birdDir.getName();
 
                 // Check if the bird already exists in the database
-                Bird existingBird = birdRepository.findByBirdName(birdName);
+                List<Bird> existingBirds = birdRepository.findByBirdName(birdName);
 
-                if (existingBird == null) {
+                if (existingBirds.isEmpty()) {
                     // Create a new Bird entity and save it to the database
                     Bird bird = createBirdEntity(birdDir, birdName);
                     birdRepository.save(bird);
                 } else {
-                    // Update existing bird with new options
+                    // Assume only one bird should be updated; otherwise, handle accordingly
+                    Bird existingBird = existingBirds.get(0);
                     updateBirdOptions(existingBird, birdDir);
                 }
             }
         }
     }
+
 
     /**
      * Reads the Wikipedia URL from the only .txt file in the specified bird directory.
